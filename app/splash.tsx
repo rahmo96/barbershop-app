@@ -23,7 +23,6 @@ export default function SplashVideo() {
                 ref={videoRef}
                 source={require("../assets/images/splash.mp4")}
                 style={{ flex: 1 }}
-                resizeMode="cover"
                 isLooping={false}
                 shouldPlay
                 isMuted={false}

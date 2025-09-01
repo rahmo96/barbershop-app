@@ -1,16 +1,17 @@
-// app/(tabs)/_layout.tsx
 import React from "react";
 import { View, useColorScheme } from "react-native";
 import { Tabs } from "expo-router";
 import TabIcon from "@/components/TabIcon";
 import { icons } from "@/constants/icons";
+import {UserProvider} from "@/context/UserContext";
 
 export default function TabsLayout() {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === "dark";
 
     return (
-        <View className={`flex-1 ${isDark ? "dark bg-brand-950" : "bg-brand-100"}`}>
+        <UserProvider>
+        <View className= "flex-1 bg-primary-light dark:bg-primary-dark">
             <Tabs
                 screenOptions={{
                     headerShown: false,
@@ -22,6 +23,14 @@ export default function TabsLayout() {
                     },
                     tabBarActiveTintColor: "#0f766e",
                     tabBarInactiveTintColor: isDark ? "#94a3b8" : "#64748b",
+                    tabBarLabelStyle: {
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        color: isDark ? "#eceff3" : "#64748b",
+                    },
+                    tabBarBackground: () => (
+                        <View className="flex-1 bg-primary-light dark:bg-black" />
+                    ),
                 }}
             >
                 <Tabs.Screen
@@ -29,17 +38,10 @@ export default function TabsLayout() {
                     options={{
                         title: "Home",
                         tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.home} title="Home" />
+                            <TabIcon focused={focused} icon={icons.home} title="" />
                         ),
-                    }}
-                />
-                <Tabs.Screen
-                    name="search"
-                    options={{
-                        title: "Search",
-                        tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.search} title="Search" />
-                        ),
+
+
                     }}
                 />
                 <Tabs.Screen
@@ -47,20 +49,33 @@ export default function TabsLayout() {
                     options={{
                         title: "Profile",
                         tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.beard} title="Profile" />
+                            <TabIcon focused={focused} icon={icons.beard} title="" />
                         ),
+
                     }}
+
                 />
                 <Tabs.Screen
                     name="services"
                     options={{
                         title: "Services",
                         tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.sccissors} title="Services" />
+                            <TabIcon focused={focused} icon={icons.sccissors} title="" />
                         ),
                     }}
                 />
+                <Tabs.Screen
+                    name = "appointments"
+                    options={{
+                        title: "Appointments",
+                        tabBarIcon: ({focused}) => (
+                            <TabIcon focused={focused} icon={icons.calendar} title=""/>),
+                    }}
+
+                    />
             </Tabs>
         </View>
+        </UserProvider>
+
     );
 }

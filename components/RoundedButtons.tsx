@@ -1,26 +1,44 @@
-import { Text, Pressable } from "react-native";
-import React from "react";
-import { useRouter } from "expo-router";
+// components/RoundedButtons.tsx
+import { Pressable } from "react-native";
+import {Href, useRouter} from "expo-router";
+import NormalText from "@/components/NormalText";
+import clsx from "clsx";
 
-
-const RoundedButton = ({ text, route, disabled, className }:{ text: string, route: any, disabled?: boolean, className?: string} ) => {
+const RoundedButton = ({
+                           text,
+                           route,
+                           disabled,
+                           className,
+                           onPress
+                       }: {
+    text: string,
+    route?: Href
+    disabled?: boolean,
+    className?: string,
+    onPress?: () => void | Promise<void>
+}) => {
     const router = useRouter();
+
+    const handlePress = () => {
+        if (onPress) {
+            onPress();
+        } else if (route) {
+            router.push(route);
+        }
+    };
 
     return (
         <Pressable
             disabled={disabled}
-            className={[
+            className={clsx(
                 "rounded-full py-3 px-6 items-center justify-center my-2",
-                // 👇 מתחלף לפי מצב המכשיר
                 "bg-brand-400 dark:bg-brand-800",
-                // אפקט לחיצה/מצב כבוי
                 disabled ? "opacity-50" : "active:opacity-90",
-                className ?? "",
-            ].join(" ")}
-            onPress={() => router.push(route)}
-
+                className
+            )}
+            onPress={handlePress}
         >
-            <Text className="text-white text-lg font-bold">{text}</Text>
+            <NormalText title={text} />
         </Pressable>
     );
 };
