@@ -1,8 +1,19 @@
 // context/UserContext.jsx
-import { ID } from "react-native-appwrite";
 import { createContext, useContext, useEffect, useState } from "react";
-import { account } from "@/utils/appwrite";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile,
+    onAuthStateChanged
+} from 'firebase/auth';
+import { auth } from "@/utils/firebase";
 import { toast } from "@/lib/toast";
+import { createUser } from "@/services/users";
+import { doc, setDoc } from "firebase/firestore";
+import { updateUser } from "@/services/users";
+import {db} from "@/utils/firebase";
+
 
 const UserContext = createContext();
 
@@ -18,13 +29,10 @@ export function UserProvider(props) {
     async function login(email, password) {
         try {
             setLoading(true);
-            await account.createEmailPasswordSession(email, password);
-            // After session creation, get the user data
-            const loggedInUser = await account.get();
-            setCurrent(loggedInUser);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            setCurrent(userCredential.user);
             toast('Welcome back. You are logged in');
-            console.log(loggedInUser);
-            return loggedInUser;
+            return userCredential.user;
         } catch (err) {
             console.error("Login error:", err);
             throw err;
@@ -36,7 +44,7 @@ export function UserProvider(props) {
     async function logout() {
         try {
             setLoading(true);
-            await account.deleteSession("current");
+            await signOut(auth);
             setCurrent(null);
             toast('Logged out');
         } catch (err) {
@@ -51,13 +59,23 @@ export function UserProvider(props) {
         try {
             setLoading(true);
             // Create the user
-            const user = await account.create(ID.unique(), email, password, name);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-            // Login after registration
-            await login(email, password);
+            // Update the user profile with name
+            await updateProfile(userCredential.user, { displayName: name });
+            await createUser(userCredential.user.uid, {
+                displayName: name,
+                email: userCredential.user.email,
+                role: "customer",
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+
+            // Update local state
+            setCurrent(userCredential.user);
 
             toast('Account created successfully');
-            return user;
+            return userCredential.user;
         } catch (err) {
             console.error("Registration error:", err);
             throw err;
@@ -65,39 +83,29 @@ export function UserProvider(props) {
             setLoading(false);
         }
     }
-
-    async function updateProfile(name) {
+    async function updateUserProfile(name) { // Renamed function
         try {
             setLoading(true);
-            const updated = await account.updateName(name);
-            setCurrent(updated); // תעדכן גם את הסטייט המקומי
+            await updateProfile(auth.currentUser, { displayName: name });
+            await updateUser(auth.currentUser.uid, { displayName: name , email: auth.currentUser.email, role: "customer", createdAt: new Date()});
+            setCurrent({...auth.currentUser});
             toast('Profile updated successfully');
-            return updated;
-        } catch (err) {
-            console.error("Update profile error:", err);
-            throw err;
+            return auth.currentUser;
         } finally {
             setLoading(false);
         }
     }
 
-    async function init() {
-        try {
-            setLoading(true);
-            const loggedIn = await account.get();
-            setCurrent(loggedIn);
-            toast('Welcome back. You are logged in');
-        } catch (err) {
-            // Not logged in
-            setCurrent(null);
-        } finally {
-            setLoading(false);
-            setAuthChecked(true);
-        }
-    }
 
     useEffect(() => {
-        init();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setCurrent(user);
+            setLoading(false);
+            setAuthChecked(true);
+        });
+
+        // Cleanup subscription
+        return () => unsubscribe();
     }, []);
 
     return (
@@ -110,6 +118,9 @@ export function UserProvider(props) {
             register,
             toast,
             updateProfile,
+            updateUserProfile
+
+
         }}>
             {props.children}
         </UserContext.Provider>

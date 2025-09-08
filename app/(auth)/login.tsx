@@ -82,19 +82,20 @@ export default function LoginScreen() {
                         />
 
                         <Pressable
-                            className="rounded-full py-3 px-6 items-center justify-center my-2 bg-brand-400 dark:bg-brand-800 w-60 mt-5"
+                            className="rounded-full py-3 px-6 items-center justify-center my-2 bg-primary-500 dark:bg-primary-700 w-60 mt-5"
                             onPress={handleLogin}
                         >
-                            <Text className="text-primary-dark dark:text-primary-light font-bold">Login</Text>
+                            <Text className="text-white font-bold">Login</Text>
                         </Pressable>
 
                         <Link href="/register" asChild>
                             <Pressable hitSlop={8} className="mt-3">
-                                <Text className="text-primary-dark dark:text-primary-light">
+                                <Text className="text-primary-700 dark:text-primary-300">
                                     Or Register instead
                                 </Text>
                             </Pressable>
                         </Link>
+
                         {error ? (
                             <Text className="text-danger mt-2">{error}</Text>
                         ) : null}
@@ -104,10 +105,10 @@ export default function LoginScreen() {
                 </ScrollView>
                 <SafeAreaView className="absolute bottom-0 left-0 right-0 items-center pb-4">
                     <Pressable
-                        className="rounded-full py-3 px-6 items-center justify-center bg-brand-400 dark:bg-brand-800 w-60"
+                        className="rounded-full py-3 px-6 items-center justify-center bg-primary-400 dark:bg-primary-600 w-60"
                         onPress={() => router.push("/")}
                     >
-                        <Text className="text-primary-dark dark:text-primary-light font-bold">
+                        <Text className="text-white font-bold">
                             Home
                         </Text>
                     </Pressable>

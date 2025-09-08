@@ -11,26 +11,29 @@ export default function TabsLayout() {
 
     return (
         <UserProvider>
-        <View className= "flex-1 bg-primary-light dark:bg-primary-dark">
+        <View className= "flex-1 ">
             <Tabs
                 screenOptions={{
                     headerShown: false,
                     tabBarStyle: {
-                        backgroundColor: isDark ? "#0f172a" : "#ffffff",
-                        borderTopColor: isDark ? "#1e293b" : "#e2e8f0",
+                        backgroundColor: isDark ? "#0a101c" : "#ffffff",
+                        borderTopColor: "transparent",
                         elevation: 0,
-                        shadowOpacity: 0,
+                        shadowOpacity: 0.1,
+                        shadowRadius: 8,
+                        shadowOffset: { height: -3, width: 0 },
+                        height: 65,
+                        paddingBottom: 8,
                     },
-                    tabBarActiveTintColor: "#0f766e",
+                    tabBarActiveTintColor: isDark? "#e8ebf1" : "#3b82f6", // Accent color
                     tabBarInactiveTintColor: isDark ? "#94a3b8" : "#64748b",
                     tabBarLabelStyle: {
                         fontSize: 12,
-                        fontWeight: "bold",
-                        color: isDark ? "#eceff3" : "#64748b",
+                        fontWeight: "600",
+                        paddingTop: 3.5
                     },
-                    tabBarBackground: () => (
-                        <View className="flex-1 bg-primary-light dark:bg-black" />
-                    ),
+                    sceneStyle: { backgroundColor: isDark ? "#0a101c" : "#ffffff" },
+
                 }}
             >
                 <Tabs.Screen
@@ -65,9 +68,9 @@ export default function TabsLayout() {
                     }}
                 />
                 <Tabs.Screen
-                    name = "appointments"
+                    name = "bookings"
                     options={{
-                        title: "Appointments",
+                        title: "My Bookings",
                         tabBarIcon: ({focused}) => (
                             <TabIcon focused={focused} icon={icons.calendar} title=""/>),
                     }}

@@ -12,7 +12,7 @@ const SERVICES: Record<string, {
     id: string;
     title: string;
     basePrice: number;
-    baseDuration: number; // בדקות
+    baseDuration: number;
     description: string;
     variants: Variant[];
     addOns: AddOn[];
@@ -95,14 +95,14 @@ export default function ServiceDetails() {
 
 
     return (
-        <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark">
+        <SafeAreaView className="flex-1 bg-primary-50 dark:bg-black">
             <ScrollView className="flex-1 px-4">
                 <Heading title={service.title} className="my-4 text-right" center={false} />
 
-                <View className="h-40 bg-brand-200 dark:bg-brand-800 rounded-xl mb-4" />
+                <View className="h-40 bg-gray-200 dark:bg-gray-800 rounded-xl mb-4" />
 
                 {/* וריאנטים (סוג תספורת) */}
-                <Text className="text-brand-900 dark:text-brand-100 mb-2 text-right" style={{ writingDirection: "rtl" }}>
+                <Text className="text-black dark:text-white mb-2 text-right" style={{ writingDirection: "rtl" }}>
                     בחר סוג תספורת:
                 </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">
@@ -114,13 +114,13 @@ export default function ServiceDetails() {
                                     key={v.id}
                                     onPress={() => setVariantId(v.id)}
                                     className={[
-                                        "px-4 py-2 rounded-full border",
+                                        "px-4 py-2 rounded-full border bg-primary-300 dark:bg-primary-600",
                                         selected
-                                            ? "bg-brand-500 border-brand-500"
-                                            : "bg-transparent border-brand-300 dark:border-brand-700"
+                                            ? "border-primary"
+                                            : "bg-transparent border-primary"
                                     ].join(" ")}
                                 >
-                                    <Text className={selected ? "text-white font-semibold" : "text-brand-900 dark:text-brand-100"}>
+                                    <Text className={selected ? "text-black dark:text-white font-semibold " : "text-black dark:text-white"}>
                                         {v.name}
                                     </Text>
                                 </Pressable>
@@ -130,25 +130,25 @@ export default function ServiceDetails() {
                 </ScrollView>
 
                 {/* תוספים (אופציונלי) */}
-                <Text className="text-brand-900 dark:text-brand-100 mb-2 text-right" style={{ writingDirection: "rtl" }}>
+                <Text className="text-black dark:text-white 0 mb-2 text-right" style={{ writingDirection: "rtl" }}>
                     תוספים:
                 </Text>
-                <View className="mb-4">
+                <View className="mb-4 ">
                     {service.addOns.map(a => {
                         const selected = addOnIds.includes(a.id);
                         return (
                             <Pressable
                                 key={a.id}
                                 onPress={() => toggleAddOn(a.id)}
-                                className="flex-row items-center justify-between bg-brand-100 dark:bg-brand-800 rounded-xl px-4 py-3 mb-2"
+                                className="flex-row items-center justify-between bg-primary-300 dark:bg-primary-700 rounded-xl px-4 py-3 mb-2"
                             >
-                                <Text className="text-brand-900 dark:text-brand-100 text-right flex-1" style={{ writingDirection: "rtl" }}>
+                                <Text className=" text-black dark:text-white text-right flex-1" style={{ writingDirection: "rtl" }}>
                                     {a.name}
                                 </Text>
-                                <Text className="text-brand-700 dark:text-brand-300 mr-3">
+                                <Text className="text-black dark:text-white mr-3">
                                     {a.priceDelta >= 0 ? `+₪${a.priceDelta}` : `-₪${Math.abs(a.priceDelta)}`}
                                 </Text>
-                                <View className={`w-5 h-5 rounded border ${selected ? "bg-brand-500 border-brand-500" : "border-brand-400"}`} />
+                                <View className={`w-5 h-5 rounded border ${selected ? "bg-black dark:bg-white" : "border-primary bg-gray-500"}`} />
                             </Pressable>
                         );
                     })}
@@ -156,27 +156,30 @@ export default function ServiceDetails() {
 
                 {/* סיכום מחיר/זמן */}
                 <View className="flex-row justify-between mb-2">
-                    <Text className="text-lg text-brand-900 dark:text-brand-100">מחיר:</Text>
-                    <Text className="text-lg font-bold text-brand-900 dark:text-brand-100">₪{totalPrice}</Text>
+                    <Text className="text-lg text-black dark:text-white">מחיר:</Text>
+                    <Text className="text-lg font-bold text-black dark:text-white">₪{totalPrice}</Text>
                 </View>
                 <View className="flex-row justify-between mb-6">
-                    <Text className="text-lg text-brand-900 dark:text-brand-100">משך:</Text>
-                    <Text className="text-lg font-bold text-brand-900 dark:text-brand-100">{totalDuration} דק׳</Text>
+                    <Text className="text-lg text-black dark:text-white">משך:</Text>
+                    <Text className="text-lg font-bold text-black dark:text-white">{totalDuration} דק׳</Text>
                 </View>
 
                 <RoundedButton
                     text="קבע תור"
                     route={{
-                        pathname: "/appointments",
+                        pathname: "/profile/appointments",
                         params: {
                             id: service.id,
+                            title: service.title,   // ← הוספתי את השם
                             variantId,
+                            description: service.title + " " + variant?.name + " " + addOnIds.map(aId => service.addOns.find(a => a.id === aId)?.name).join(", "),
                             addOns: addOnIds.join(","),
                             price: String(totalPrice),
                             duration: String(totalDuration),
                         },
                     }}
                 />
+
             </ScrollView>
         </SafeAreaView>
     );

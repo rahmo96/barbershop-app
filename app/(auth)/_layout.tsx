@@ -11,19 +11,18 @@ export default function AuthLayout() {
 
     return (
         <UserProvider>
-            <View  className= "flex-1 bg-primary-light dark:bg-primary-dark"  >
-            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <Stack
-                screenOptions={{
-                    headerShown: false,
-                    contentStyle: { backgroundColor: "transparent" },
-                    animation: "fade",
-                    animationDuration: 100,
-                }}
-            >
-
-            </Stack>
-        </View>
-            </UserProvider>
+            <View className="flex-1 bg-primary-50 dark:bg-primary-900">
+                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+                <Stack
+                    screenOptions={{
+                        headerShown: false,
+                        contentStyle: { backgroundColor: "transparent" },
+                        animation: "fade",
+                        animationDuration: 100,
+                    }}
+                >
+                </Stack>
+            </View>
+        </UserProvider>
     );
 }

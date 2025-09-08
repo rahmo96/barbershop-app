@@ -13,7 +13,6 @@ export default function Heading({
                                     title,
                                     children,
                                     center = true,
-                                    className,
                                     isError,
                                     style,
                                     ...rest
@@ -28,9 +27,8 @@ export default function Heading({
             style={[style, fontsLoaded && { fontFamily: "varela" }]}
             className={cn(
                 "text-4xl",
-                isError ? "text-danger dark:text-danger" : "text-brand-900 dark:text-brand-100",
+                isError ? "text-danger dark:text-danger" : "text-black dark:text-white",
                 center && "text-center",
-                className
             )}
         >
             {children ?? title}

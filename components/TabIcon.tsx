@@ -1,7 +1,7 @@
 // components/TabIcon.tsx
 import React from "react";
 import { Image, Text, View, StyleSheet, ImageSourcePropType } from "react-native";
-import GreenPill from "@/components/GreenPill";
+import TabsPill from "@/components/TabsPill";
 
 type Props = { focused: boolean; icon: ImageSourcePropType; title?: string; className?: string };
 
@@ -10,7 +10,7 @@ const TabIcon = ({ focused, icon, title = "" }: Props) => {
         return (
             <View className="relative flex flex-row w-full flex-1 min-w-[112px] min-h-14 mt-4 justify-center items-center rounded-full overflow-hidden">
                 {/* Background pill — fills the entire container */}
-                <GreenPill style={StyleSheet.absoluteFill} />
+                <TabsPill style={StyleSheet.absoluteFill} />
 
                 <Image source={icon} style={{ tintColor: "#115E59" }} className="w-5 h-5" />
                 {!!title && (

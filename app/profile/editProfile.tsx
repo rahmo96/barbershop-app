@@ -16,7 +16,7 @@ import RoundedButton from "@/components/RoundedButtons";
 import { useUser } from "@/context/UserContext";
 
 export default function EditProfile() {
-    const { current, loading, updateProfile } = useUser();
+    const { current, loading, updateUserProfile } = useUser();
     const router = useRouter();
 
     // State for user data
@@ -38,14 +38,13 @@ export default function EditProfile() {
     }
 
     const handleSave = () => {
-        // Here you would implement actual update logic with Appwrite
-        // For now, just navigate back
-        updateProfile(name);
+
+        updateUserProfile(name);
         router.push("/profile");
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark">
+        <SafeAreaView className="flex-1 bg-white dark:bg-black">
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={{ flex: 1 }}
@@ -53,7 +52,7 @@ export default function EditProfile() {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                         <View className="px-4 py-6">
-                            <Heading title="Edit Profile" className="mb-6" />
+                            <Heading title="Edit Profile" style={{marginBottom: 30}} />
 
                             <View className="space-y-4">
                                 <ThemedInput

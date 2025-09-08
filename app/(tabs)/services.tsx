@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Heading from "@/components/Heading";
 import { useUser } from "@/context/UserContext";
+import {useFonts} from "expo-font";
+import AnimatedCard from "@/components/AnimatedCard";
 
 // Mock data
 const SERVICES = [
@@ -34,6 +36,9 @@ const SERVICES = [
 export default function Services() {
     const router = useRouter();
     const { current } = useUser();
+    const [fontsLoaded] = useFonts({
+        varela: require("../../assets/fonts/VarelaRound-Regular.ttf"),
+    });
 
     const handlePress = (item: any) => {
         if (!current) {
@@ -44,32 +49,45 @@ export default function Services() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark">
+        <SafeAreaView className="flex-1 bg-primary-50 dark:bg-black">
             <Heading title="השירותים שלנו" className="my-4" />
 
             <FlatList
                 data={SERVICES}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{ padding: 16 }}
-                renderItem={({ item }) => (
-                    <Pressable
-                        onPress={() => handlePress(item)}
-                        className="flex-row justify-between items-center p-4 mb-4 bg-white dark:bg-gray-800 rounded-lg"
-                    >
-                        <View>
-                            <Text className="text-lg font-bold text-brand-900 dark:text-brand-100">
-                                {item.name}
-                            </Text>
-                            <Text className="text-sm text-gray-600 dark:text-gray-400">
-                                {item.description}
-                            </Text>
-                            <Text className="text-brand-500 font-bold mt-1">
-                                ₪{item.price}
-                            </Text>
+                renderItem={({ item, index }) => (
+                    <AnimatedCard index={index} onPress={() => handlePress(item)}>
+                        <View className="p-5 mb-4 bg-white dark:bg-gray-500 rounded-xl shadow-md overflow-hidden">
+                            <View className="flex-row justify-between">
+                                <View className="flex-1 pr-4">
+                                    <Text
+                                        className="text-xl text-primary-800 dark:text-primary-300 mb-1"
+                                        style={{ fontFamily: "varela" }}
+                                    >
+                                        {item.name}
+                                    </Text>
+                                    <Text
+                                        className="text-sm text-gray-600 dark:text-gray-200 mb-2"
+                                        style={{ fontFamily: "varela" }}
+                                    >
+                                        {item.description}
+                                    </Text>
+                                    <Text
+                                        className="text-accent-600 text-lg text-gray-600 dark:text-gray-200"
+                                        style={{ fontFamily: "varela" }}
+                                    >
+                                        ₪{item.price}
+                                    </Text>
+                                </View>
+                                <Image
+                                    source={item.image}
+                                    className="w-20 h-20 rounded-lg"
+                                    resizeMode="cover"
+                                />
+                            </View>
                         </View>
-
-                        <Image source={item.image} className="w-16 h-16 rounded-lg" />
-                    </Pressable>
+                    </AnimatedCard>
                 )}
             />
         </SafeAreaView>

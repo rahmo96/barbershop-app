@@ -28,7 +28,7 @@ export default function NormalText({
             style={[style, fontsLoaded && { fontFamily: "varela" }]}
             className={cn(
                 "text-2xl",
-                isError ? "text-danger dark:text-danger" : "text-brand-900 dark:text-brand-100",
+                isError ? "text-danger dark:text-danger" : "text-black dark:text-white",
                 center && "text-center",
                 className
             )}

@@ -28,17 +28,15 @@ const RoundedButton = ({
     };
 
     return (
+// components/RoundedButtons.tsx
         <Pressable
-            disabled={disabled}
-            className={clsx(
-                "rounded-full py-3 px-6 items-center justify-center my-2",
-                "bg-brand-400 dark:bg-brand-800",
-                disabled ? "opacity-50" : "active:opacity-90",
-                className
-            )}
+            className={`rounded-full py-3 px-6 items-center justify-center my-2 
+                ${disabled ? 'bg-gray-400 dark:bg-gray-600' : 'bg-primary-500 dark:bg-primary-700'} 
+                ${className}`}
             onPress={handlePress}
+            disabled={disabled}
         >
-            <NormalText title={text} />
+            <NormalText className="text-white ">{text}</NormalText>
         </Pressable>
     );
 };

@@ -16,6 +16,8 @@ import RoundedButton from "@/components/RoundedButtons";
 import { useUser } from "@/context/UserContext";
 import {useRouter, Redirect, Link} from "expo-router";
 import Heading from "@/components/Heading";
+import { db } from "@/utils/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Register() {
     const keyboardVerticalOffset = Platform.select({ ios: 64, android: 0 });
@@ -55,7 +57,7 @@ export default function Register() {
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={keyboardVerticalOffset}
-            className="flex-1 bg-primary-light dark:bg-primary-dark"
+            className="flex-1 bg-primary-50 dark:bg-primary-900"
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <ScrollView
@@ -78,7 +80,6 @@ export default function Register() {
                             textContentType="name"
                             returnKeyType="next"
                             onSubmitEditing={() => emailRef.current?.focus()}
-                            className="w-80 mb-3"
                         />
 
                         {/* Email */}
@@ -93,7 +94,6 @@ export default function Register() {
                             textContentType="emailAddress"
                             returnKeyType="next"
                             onSubmitEditing={() => passwordRef.current?.focus()}
-                            className="w-80 mb-3"
                         />
 
                         {/* Password */}
@@ -107,7 +107,6 @@ export default function Register() {
                             textContentType="newPassword"
                             returnKeyType="done"
                             onSubmitEditing={Keyboard.dismiss}
-                            className="w-80 mb-6"
                         />
 
                         <RoundedButton
@@ -118,7 +117,7 @@ export default function Register() {
 
                         <Link href="/login" asChild>
                             <Pressable hitSlop={8} className="mt-3">
-                                <Text className="text-primary-dark dark:text-primary-light">
+                                <Text className="text-primary-700 dark:text-primary-300">
                                     Already have an account? Login
                                 </Text>
                             </Pressable>

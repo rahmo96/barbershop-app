@@ -1,4 +1,4 @@
-// components/GreenPill.tsx
+// components/TabsPill.tsx
 import React from "react";
 import {ViewStyle, StyleProp, useColorScheme} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,7 +11,7 @@ type Props = {
     children?: React.ReactNode;
 };
 
-export default function GreenPill({
+export default function TabsPill({
                                       style,
                                       children,
                                   }: Props) {
@@ -19,9 +19,8 @@ export default function GreenPill({
     const theme = colorScheme === 'dark' ? 'dark' : 'light'
     return (
         <LinearGradient
-            // ירוק בהיר נעים (אפשר לשנות גוונים כאן)
-            colors={theme === "dark" ? ["#f3d4b8", "#f6a344", "#a16207"]
-                :["#fcecb0", "#f3d77d", "#ca8a04"]
+            colors={theme === "dark" ? ["#1d4ed8", "#153ba6", "#0e2567"]
+                :["#93c5fd", "#6aafff", "#3a95fa"]
             }
             start={{ x: 0.1, y: 0.0 }}
             end={{ x: 0.2, y: 1.0 }}

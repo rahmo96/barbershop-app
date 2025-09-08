@@ -11,8 +11,8 @@ export default function SplashVideo() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.replace("/"); // עובר ל־index.tsx
-        }, 500);
+            router.replace("/");
+        }, 3000);
         return () => clearTimeout(timer);
     }, []);
 
