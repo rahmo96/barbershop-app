@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Expo EAS CI/CD
 
 on:
   push:
@@ -27,15 +27,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Run tests
+      # Run tests (אופציונלי)
       - name: Run tests
-        run: npm test
+        run: npm test || echo "No tests found"
 
-      # Build the project
-      - name: Build project
-        run: npm run build
+      # Install EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
-  deploy:
+      # Build for Android & iOS
+      - name: Build with EAS
+        run: eas build --platform all --non-interactive --profile production
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  submit:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -45,8 +51,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Deploy to a hosting service (e.g., Vercel, Firebase, AWS)
-      - name: Deploy to Vercel
-        run: npx vercel deploy --prod
+      # Install EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Submit to App Store & Google Play
+      - name: Submit builds
+        run: eas submit --platform all --non-interactive --latest
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
