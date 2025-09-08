@@ -2,7 +2,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDxQqRLZKSf9ePqJqhT-AKrWdW2z2OWWoo",
+    apiKey: ${{ secrets.apiKey }},
     authDomain: "barbershop-app-d8e62.firebaseapp.com",
     projectId: "barbershop-app-d8e62",
     storageBucket: "barbershop-app-d8e62.firebasestorage.app",
