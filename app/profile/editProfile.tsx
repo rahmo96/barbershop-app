@@ -8,7 +8,7 @@ import {
     Keyboard,
     ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Redirect } from "expo-router";
 import Heading from "@/components/Heading";
 import ThemedInput from "@/components/ThemedInput";

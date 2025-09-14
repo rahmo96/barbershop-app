@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router'
 import { useEffect } from 'react'
 import {ActivityIndicator} from 'react-native'
 import Heading from "@/components/Heading";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 // @ts-ignore
 const UserOnly = ({ children }) => {

@@ -1,55 +1,44 @@
 // app/confirm.tsx
 import React, { useState } from "react";
-import { View, Text, Alert, ActivityIndicator } from "react-native";
+import { View, Text, Alert, ActivityIndicator, ScrollView, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useUser } from "@/context/UserContext";
+import { useLocalization } from "@/context/LocalizationContext";
 import Heading from "@/components/Heading";
 import RoundedButton from "@/components/RoundedButtons";
-import LoadingScreen from "@/components/LoadingScreen";
-import { createAppointment } from "@/services/appointments"; // You'll need to create this service
+import { createAppointment } from "@/services/appointments";
 import { updateSlotAvailability } from "@/services/timeSlots";
 
-export default function ConfirmScreen() {
-    const { current, loading } = useUser();
+export default function Confirm() {
+    const { t } = useLocalization();
+    const { current } = useUser();
     const router = useRouter();
     const params = useLocalSearchParams();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isDark = useColorScheme() === "dark";
 
-    // Extract and parse parameters
-    const id = params.id as string;
-    const variantId = params.variantId as string;
-    let addOns: any[] = [];
-    try {
-        addOns = params.addOns ? JSON.parse(params.addOns as string) : [];
-    } catch {
-        addOns = Array.isArray(params.addOns) ? (params.addOns as string[]) : [];
-    }
+    // Extract and parse params
     const title = params.title as string;
-
+    const serviceId = params.serviceId as string;
+    const description = params.description as string;
     const date = params.date as string;
     const time = params.time as string;
     const price = parseFloat(params.price as string);
     const duration = parseInt(params.duration as string);
-    const description = params.description as string;
-    const barberId = params.barberId as string;
+    const variantId = params.variantId as string || null;
+    const addOns = params.addOns ? JSON.parse(params.addOns as string) : [];
 
-    // --- Guard for loading/not logged in ---
-    if (loading) return <LoadingScreen />;
-    if (!current) return <Redirect href="/login" />;
-
-    // Calculate total price (implement if needed)
-    const totalPrice = price; // Add add-ons price calculation if needed
+    // Calculate total price (base + addons)
+    const totalPrice = price;
 
     const handleConfirm = async () => {
         try {
             setIsSubmitting(true);
 
-
-            // Create the appointment in Firebase
             await createAppointment({
                 userId: current.uid,
-                serviceId: id,
+                serviceId: serviceId,
                 name: title,
                 variantId,
                 addOns,
@@ -57,19 +46,16 @@ export default function ConfirmScreen() {
                 time,
                 price: totalPrice,
                 duration,
-                description: params.description as string,
-                status: 'confirmed',
+                description,
+                status: "confirmed",
             });
 
-
+            // Update slot availability
             await updateSlotAvailability(date, time, false);
 
-            // Show success message
-            Alert.alert(
-                "הזמנה התקבלה",
-                "התור נקבע בהצלחה! תודה שבחרת בנו.",
-                [{ text: "אישור", onPress: () => router.replace("/(tabs)/profile") }]
-            );
+            Alert.alert("הזמנה התקבלה", "התור נקבע בהצלחה! תודה שבחרת בנו.", [
+                { text: "אישור", onPress: () => router.replace("/(tabs)/profile") },
+            ]);
         } catch (error) {
             console.error("Error creating appointment:", error);
             Alert.alert("שגיאה", "אירעה שגיאה בעת יצירת התור. אנא נסה שוב מאוחר יותר.");
@@ -78,62 +64,72 @@ export default function ConfirmScreen() {
         }
     };
 
-    const handleCancel = () => {
-        router.back();
-    };
-
     return (
-        <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark">
-            <View className="flex-1 px-4 py-6">
-                <Heading title="אישור תור" className="text-center mb-8" />
+        <SafeAreaView className="flex-1 bg-white dark:bg-black">
+            <ScrollView>
+                <View className="px-4 py-6">
+                    <Heading title={t("confirmationDetails")} />
 
-                <View className="bg-secondary-light dark:bg-secondary-dark p-6 rounded-lg shadow-md">
-                    <Text className="text-primary-dark dark:text-primary-light text-lg mb-4 text-center font-bold">
-                        פרטי ההזמנה
-                    </Text>
+                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-5 mt-6">
+                        <Text className="text-lg font-bold mb-3 text-black dark:text-white">
+                            {t(title)}
+                        </Text>
 
-                    <View className="mb-6 space-y-2">
-                        <View className="flex-row justify-between">
-                            <Text className="text-primary-dark dark:text-primary-light font-bold">תאריך:</Text>
-                            <Text className="text-primary-dark dark:text-primary-light">{date}</Text>
-                        </View>
+                        <View className="space-y-4">
+                            <View>
+                            </View>
 
-                        <View className="flex-row justify-between">
-                            <Text className="text-primary-dark dark:text-primary-light font-bold">שעה:</Text>
-                            <Text className="text-primary-dark dark:text-primary-light">{time}</Text>
-                        </View>
+                            <View>
+                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                    {t("date")}
+                                </Text>
+                                <Text className="text-md font-medium text-black dark:text-white">
+                                    {date}
+                                </Text>
+                            </View>
 
-                        <View className="flex-row justify-between">
-                            <Text className="text-primary-dark dark:text-primary-light font-bold">משך:</Text>
-                            <Text className="text-primary-dark dark:text-primary-light">{duration} דקות</Text>
-                        </View>
+                            <View>
+                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                    {t("time")}
+                                </Text>
+                                <Text className="text-md font-medium text-black dark:text-white">
+                                    {time}
+                                </Text>
+                            </View>
 
-                        <View className="flex-row justify-between">
-                            <Text className="text-primary-dark dark:text-primary-light font-bold">מחיר:</Text>
-                            <Text className="text-primary-dark dark:text-primary-light">₪{totalPrice}</Text>
+                            <View>
+                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                    {t("duration")}
+                                </Text>
+                                <Text className="text-md font-medium text-black dark:text-white">
+                                    {duration} {t("minutes")}
+                                </Text>
+                            </View>
+
+                            <View>
+                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                    {t("price")}
+                                </Text>
+                                <Text className="text-md font-medium text-black dark:text-white">
+                                    ₪{totalPrice}
+                                </Text>
+                            </View>
                         </View>
                     </View>
 
                     <View className="mt-6 space-y-4">
                         <RoundedButton
-                            text={isSubmitting ? "מאשר..." : "אישור והזמנה"}
+                            text={isSubmitting ? t("approving") : t("confirmAndContinue")}
                             onPress={handleConfirm}
                             disabled={isSubmitting}
                         />
 
                         {isSubmitting && (
-                            <ActivityIndicator size="small" color="#713f12" className="my-2" />
+                            <ActivityIndicator size="small" color={isDark ? "#fff" : "#000"} />
                         )}
-
-                        <RoundedButton
-                            text="ביטול"
-                            onPress={handleCancel}
-                            disabled={isSubmitting}
-                            className="bg-gray-400 dark:bg-gray-600"
-                        />
                     </View>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }

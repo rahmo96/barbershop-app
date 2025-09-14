@@ -1,7 +1,7 @@
 // components/LoadingScreen.tsx
 import React, { useRef, useEffect } from "react";
-import { View, ActivityIndicator, Animated } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {  ActivityIndicator, Animated } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Heading from "@/components/Heading";
 
 type LoadingScreenProps = {

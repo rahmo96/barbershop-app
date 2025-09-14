@@ -1,111 +1,102 @@
-// app/(tabs)/profile.tsx
-import { View, Text, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import RoundedButton from "@/components/RoundedButtons";
-import Heading from "@/components/Heading";
-import { Redirect, useRouter } from "expo-router";
+// app/profile.tsx
+import React, { useEffect, ReactNode} from "react";
+import { View, Text, ScrollView } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter, Redirect } from "expo-router";
 import { useUser } from "@/context/UserContext";
-import { ProfileItem } from "@/components/ProfileItem";
-import { Edit3, Calendar, LogOut } from "lucide-react-native";
+import Heading from "@/components/Heading";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    withSpring,
     withTiming,
-    withDelay,
 } from "react-native-reanimated";
-import { useEffect } from "react";
+import { ProfileItem } from "@/components/ProfileItem";
+import { Edit3, Calendar, LogOut } from "lucide-react-native";
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLocalization } from '@/context/LocalizationContext';
 
-const Profile = () => {
+export default function Profile() {
     const { current, loading, logout } = useUser();
+    const { t } = useLocalization();
     const router = useRouter();
 
-    // Shared values
+    // Shared values for animations
     const opacity = useSharedValue(0);
-    const scale = useSharedValue(1);
-
-    // Fade in for whole screen
-    const fadeStyle = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-    }));
-
-    // Scale animation for avatar
-    const avatarStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
+    const translateY = useSharedValue(20);
 
     // Animate on mount
     useEffect(() => {
-        opacity.value = withTiming(1, { duration: 1000 });
+        opacity.value = withTiming(1, { duration: 800 });
+        translateY.value = withTiming(0, { duration: 800 });
     }, []);
 
-    // Handle press on avatar
-    const handleAvatarPress = () => {
-        scale.value = withSpring(scale.value === 1 ? 1.1 : 1);
-    };
+    // Animated styles
+    const containerStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }],
+    }));
 
-    // Show loading state
+    // If still loading, show loading state
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 items-center justify-center bg-primary-light dark:bg-primary-dark">
-                <Heading title="Loading..." />
+            <SafeAreaView className="flex-1 items-center justify-center bg-white dark:bg-black">
+                <Heading title={t("loading")} />
             </SafeAreaView>
         );
     }
 
-    // Redirect if not logged in
+    // Redirect to login if not authenticated
     if (current === null) {
         return <Redirect href="/login" />;
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-primary-50 dark:bg-black">
-            <Animated.View style={[fadeStyle]} className="flex-1 px-5">
-                <View className="items-center pt-6 pb-8">
-                    {/* Avatar with press scale */}
-                    <Pressable onPress={handleAvatarPress}>
-                        <Animated.View
-                            style={[avatarStyle]}
-                            className="w-28 h-28 rounded-full bg-brand-200 dark:bg-brand-800 mb-4 overflow-hidden border-4 border-white dark:border-gray-800 shadow-md"
-                        />
-                    </Pressable>
+        <SafeAreaView className="flex-1 bg-white dark:bg-black">
+            <ScrollView>
+                <Animated.View
+                    style={containerStyle}
+                    className="px-4 py-6"
+                >
+                    <Heading title={t("profile")} />
 
-                    <Heading className="text-2xl text-gray-500 dark:text-gray-400 mb-1">
-                        {current?.displayName}
-                    </Heading>
-                    <Text className="text-sm text-gray-500 dark:text-gray-400 mt-6">
-                        {current?.email}
-                    </Text>
-                </View>
+                    <View className="items-center mt-6 mb-8">
+                        <View className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 mb-4 items-center justify-center">
+                            <Text className="text-2xl font-bold text-gray-600 dark:text-gray-300">
+                                {current.displayName ? current.displayName.charAt(0).toUpperCase() : "U"}
+                            </Text>
+                        </View>
 
-                {/* Profile Items with stagger animation */}
-                <View className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm mb-5">
-                    <Text className="text-lg font-bold text-black dark:text-white mb-4 text-right">
-                        משתמש
-                    </Text>
+                        <Text className="text-xl font-bold mb-1 text-black dark:text-white">
+                            {current.displayName || t("user")}
+                        </Text>
 
-                    <View className="space-y-3">
-                        <StaggeredItem delay={200}>
+                        <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            {current.email}
+                        </Text>
+                    </View>
+
+                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 mb-6">
+                        <Text className="text-lg font-bold mb-4 text-black dark:text-white">
+                            {t("accountSettings")}
+                        </Text>
+
+                        <View className="space-y-3">
                             <ProfileItem
-                                title="ערוך פרופיל"
+                                title={t("editProfile")}
                                 color="bg-blue-100 dark:bg-blue-900"
                                 onPress={() => router.push("/profile/editProfile")}
                                 icon={<Edit3 size={16} color="black" />}
                             />
-                        </StaggeredItem>
 
-                        <StaggeredItem delay={400}>
                             <ProfileItem
-                                title="התורים שלי"
+                                title={t("myAppointments")}
                                 color="bg-green-100 dark:bg-green-900"
                                 onPress={() => router.push("/bookings")}
                                 icon={<Calendar size={16} color="black" />}
                             />
-                        </StaggeredItem>
 
-                        <StaggeredItem delay={600}>
                             <ProfileItem
-                                title="התנתק"
+                                title={t("logout")}
                                 color="bg-red-100 dark:bg-red-900"
                                 onPress={async () => {
                                     await logout();
@@ -113,22 +104,31 @@ const Profile = () => {
                                 }}
                                 icon={<LogOut size={16} color="black" />}
                             />
-                        </StaggeredItem>
+                        </View>
                     </View>
-                </View>
-            </Animated.View>
+
+                    <View className="items-center mt-4">
+                        <LanguageSwitcher />
+                    </View>
+                </Animated.View>
+            </ScrollView>
         </SafeAreaView>
     );
-};
+}
 
-// Helper component for staggered fade/slide
-const StaggeredItem = ({ children, delay }: { children: React.ReactNode; delay: number }) => {
+interface StaggeredItemProps {
+    children: ReactNode;
+    delay?: number;
+}
+
+// Add a StaggeredItem component for animations
+const StaggeredItem: React.FC<StaggeredItemProps> = ({ children }) => {
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(20);
 
     useEffect(() => {
-        opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
-        translateY.value = withDelay(delay, withSpring(0));
+        opacity.value = withTiming(1, { duration: 500 });
+        translateY.value = withTiming(0, { duration: 500 });
     }, []);
 
     const style = useAnimatedStyle(() => ({
@@ -138,5 +138,3 @@ const StaggeredItem = ({ children, delay }: { children: React.ReactNode; delay: 
 
     return <Animated.View style={style}>{children}</Animated.View>;
 };
-
-export default Profile;

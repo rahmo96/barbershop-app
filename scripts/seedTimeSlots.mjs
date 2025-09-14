@@ -2,7 +2,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: ${{ secrets.apiKey }},
+    apiKey: process.env.EXPO_PUBLIC_API_KEY,
     authDomain: "barbershop-app-d8e62.firebaseapp.com",
     projectId: "barbershop-app-d8e62",
     storageBucket: "barbershop-app-d8e62.firebasestorage.app",
@@ -36,7 +36,7 @@ async function seedTimeSlot(date) {
     console.log(`Created time slots for ${date}`);
 }
 
-// טווח תאריכים
+// dates ranges
 function generateDates(startDate, endDate) {
     const dates = [];
     const currentDate = new Date(startDate);

@@ -14,9 +14,12 @@ import ThemedInput from "@/components/ThemedInput";
 import { Link, useRouter, Redirect } from "expo-router";
 import { useUser } from "@/context/UserContext";
 import Heading from "@/components/Heading";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {SafeAreaView} from 'react-native-safe-area-context';
+import { useLocalization } from '@/context/LocalizationContext';
 
 export default function LoginScreen() {
+    const { t, locale } = useLocalization();
+    const textAlign = locale === 'he' ? 'right' : 'left';
     const keyboardVerticalOffset = Platform.select({ ios: 64, android: 0 });
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -41,7 +44,7 @@ export default function LoginScreen() {
             if (err instanceof Error) {
                 setError(err.message);
             } else {
-                setError("Login failed. Please try again.");
+                setError(t("loginFailed"));
             }
         }
     };
@@ -54,65 +57,67 @@ export default function LoginScreen() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View className="flex-1">
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    <View className="flex-1 items-center justify-center px-6">
-                        <Heading className="my-4">Login</Heading>
-
-                        <View className="h-5" />
-
-                        <ThemedInput
-                            placeholder="Email"
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            onChangeText={setEmail}
-                            value={email}
-                        />
-
-                        <View className="h-3" />
-
-                        <ThemedInput
-                            placeholder="Password"
-                            secureTextEntry
-                            keyboardType="default"
-                            onChangeText={setPassword}
-                            value={password}
-                        />
-
-                        <Pressable
-                            className="rounded-full py-3 px-6 items-center justify-center my-2 bg-primary-500 dark:bg-primary-700 w-60 mt-5"
-                            onPress={handleLogin}
-                        >
-                            <Text className="text-white font-bold">Login</Text>
-                        </Pressable>
-
-                        <Link href="/register" asChild>
-                            <Pressable hitSlop={8} className="mt-3">
-                                <Text className="text-primary-700 dark:text-primary-300">
-                                    Or Register instead
-                                </Text>
-                            </Pressable>
-                        </Link>
-
-                        {error ? (
-                            <Text className="text-danger mt-2">{error}</Text>
-                        ) : null}
-
-                        <View className="h-6" />
-                    </View>
-                </ScrollView>
-                <SafeAreaView className="absolute bottom-0 left-0 right-0 items-center pb-4">
-                    <Pressable
-                        className="rounded-full py-3 px-6 items-center justify-center bg-primary-400 dark:bg-primary-600 w-60"
-                        onPress={() => router.push("/")}
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        keyboardShouldPersistTaps="handled"
                     >
-                        <Text className="text-white font-bold">
-                            Home
-                        </Text>
-                    </Pressable>
-                </SafeAreaView>
+                        <View className="flex-1 items-center justify-center px-6">
+                            <Heading className="my-4">{t("login")}</Heading>
+
+                            <View className="h-5" />
+
+                            <ThemedInput
+                                placeholder={t("email")}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                onChangeText={setEmail}
+                                value={email}
+                                style={{ textAlign }}
+                            />
+
+                            <View className="h-3" />
+
+                            <ThemedInput
+                                placeholder={t("password")}
+                                secureTextEntry
+                                keyboardType="default"
+                                onChangeText={setPassword}
+                                value={password}
+                                style={{ textAlign }}
+                            />
+
+                            <Pressable
+                                className="rounded-full py-3 px-6 items-center justify-center my-2 bg-primary-500 dark:bg-primary-700 w-60 mt-5"
+                                onPress={handleLogin}
+                            >
+                                <Text className="text-white font-bold">{t("login")}</Text>
+                            </Pressable>
+
+                            <Link href="/register" asChild>
+                                <Pressable hitSlop={8} className="mt-3">
+                                    <Text className="text-primary-700 dark:text-primary-300">
+                                        {t("orRegister")}
+                                    </Text>
+                                </Pressable>
+                            </Link>
+
+                            {error ? (
+                                <Text className="text-danger mt-2">{error}</Text>
+                            ) : null}
+
+                            <View className="h-6" />
+                        </View>
+                    </ScrollView>
+                    <SafeAreaView className="absolute bottom-0 left-0 right-0 items-center pb-4">
+                        <Pressable
+                            className="rounded-full py-3 px-6 items-center justify-center bg-primary-400 dark:bg-primary-600 w-60"
+                            onPress={() => router.push("/")}
+                        >
+                            <Text className="text-white font-bold">
+                                {t("home")}
+                            </Text>
+                        </Pressable>
+                    </SafeAreaView>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

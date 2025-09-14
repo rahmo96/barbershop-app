@@ -1,6 +1,6 @@
 // services/timeSlots.ts
 import { db } from "@/utils/firebase";
-import { doc, getDoc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc} from "firebase/firestore";
 
 export async function getTimeSlots(date: string) {
     try {
@@ -109,6 +109,33 @@ export async function restoreSlotAvailability(
         return null;
     } catch (error) {
         console.error("Error restoring slot availability:", error);
+        throw error;
+    }
+}
+
+export async function getAvailableTimeSlots(date: string) {
+    try {
+        // Reference to the slots document for this date and barber
+        const slotsRef = doc(db, "timeSlots", `${date}`);
+        const slotsDoc = await getDoc(slotsRef);
+
+        // Check if slots exist for this date and barber
+        if (slotsDoc.exists()) {
+            return slotsDoc.data().slots || [];
+        } else {
+            // Create default slots if none exist
+            const defaultSlots = generateDefaultTimeSlots();
+
+            // Save the default slots to Firestore
+            await setDoc(slotsRef, {
+                date,
+                slots: defaultSlots
+            });
+
+            return defaultSlots;
+        }
+    } catch (error) {
+        console.error("Error fetching time slots:", error);
         throw error;
     }
 }

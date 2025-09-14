@@ -1,14 +1,19 @@
+// app/(tabs)/bookings.tsx
 import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from "@/context/UserContext";
 import { cancelAppointment, getUserAppointments } from "@/services/appointments";
 import Heading from "@/components/Heading";
 import NormalText from "@/components/NormalText";
 import { Redirect, router, useFocusEffect } from "expo-router";
+import { useLocalization } from "@/context/LocalizationContext";
+import { format } from "date-fns";
+import { he } from "date-fns/locale";
 
 export default function Bookings() {
     const { current, loading } = useUser();
+    const { t, locale } = useLocalization();
     const [appointments, setAppointments] = useState<any[]>([]);
     const [loadingAppointments, setLoadingAppointments] = useState(true);
 
@@ -16,7 +21,7 @@ export default function Bookings() {
         if (!current) return;
         setLoadingAppointments(true);
         try {
-            const data = await getUserAppointments(current.uid ,["booked", "rescheduled"]);
+            const data = await getUserAppointments(current.uid, ["booked", "rescheduled"]);
             setAppointments(data);
         } catch (err) {
             console.error(err);
@@ -43,33 +48,79 @@ export default function Bookings() {
         return <Redirect href="/login" />;
     }
 
+
+    const formatDate = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            return format(date, locale === 'he' ? 'dd בMMMM yyyy' : 'MMM dd, yyyy', {
+                locale: locale === 'he' ? he : undefined
+            });
+        } catch (error) {
+            console.error("Date formatting error:", error);
+            return dateString;
+        }
+    };
+
     return (
-        <SafeAreaView className="flex-1 bg-white dark:bg-black px-4 py-6">
-            <Heading title="התורים שלי" />
+        <SafeAreaView className="flex-1 bg-white dark:bg-gray-900 px-4">
+            <Heading className="my-6 text-center">{t("myAppointments")}</Heading>
 
             {loadingAppointments ? (
-                <ActivityIndicator size="large" className="mt-6" />
+                <View className="flex-1 items-center justify-center">
+                    <ActivityIndicator size="large" />
+                </View>
             ) : appointments.length === 0 ? (
-                <NormalText className="mt-6 text-center text-gray-500">
-                    אין לך תורים עתידיים
-                </NormalText>
+                <View className="flex-1 items-center justify-center">
+                    <NormalText className="text-center">{t("noAppointments")}</NormalText>
+                    <Pressable
+                        className="bg-primary-500 px-5 py-3 rounded-lg mt-4"
+                        onPress={() => router.push("/(tabs)/services")}
+                    >
+                        <Text className="text-white font-semibold">{t("bookAppointment")}</Text>
+                    </Pressable>
+                </View>
             ) : (
                 <FlatList
                     data={appointments}
                     keyExtractor={(item) => item.id}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                     renderItem={({ item }) => (
-                        <View className="p-4 mb-3 rounded-lg bg-gray-100 dark:bg-gray-800">
-                            <Text className="text-lg font-bold text-black dark:text-white">
-                                {item.date} בשעה {item.time}
-                            </Text>
-                            <Text className="text-sm text-gray-600 dark:text-gray-300">
-                                משך: {item.duration} דקות | ₪{item.price}
-                            </Text>
-                            <Text className="text-sm text-gray-600 dark:text-gray-300">
-                                סטטוס: {item.status}
+                        <View className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
+
+                            <Text className="text-lg font-bold text-black dark:text-white mb-1">
+                                {item.name}
                             </Text>
 
-                            {/* כפתורי פעולה */}
+                            <View className="flex-row items-center mt-2">
+                                <View className="bg-primary-100 dark:bg-primary-900 px-3 py-1 rounded-full">
+                                    <Text className="text-primary-700 dark:text-primary-300">
+                                        {formatDate(item.date)}
+                                    </Text>
+                                </View>
+                                <View className="bg-primary-100 dark:bg-primary-900 px-3 py-1 rounded-full ml-2">
+                                    <Text className="text-primary-700 dark:text-primary-300">
+                                        {item.time}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View className="mt-3">
+                                <Text className="text-gray-600 dark:text-gray-400">
+                                    {t("duration")}: {item.duration} {t("minutes")}
+                                </Text>
+                                <Text className="text-gray-600 dark:text-gray-400">
+                                    {t("price")}: ₪{item.price}
+                                </Text>
+                                {item.status === "rescheduled" && (
+                                    <View className="bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded mt-2 self-start">
+                                        <Text className="text-yellow-800 dark:text-yellow-300 text-sm">
+                                            {t("rescheduled")}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
+
                             <View className="flex-row mt-3 space-x-3">
                                 <Pressable
                                     className="bg-red-500 px-3 py-2 rounded-lg"
@@ -80,7 +131,7 @@ export default function Bookings() {
                                         );
                                     }}
                                 >
-                                    <Text className="text-white">בטל</Text>
+                                    <Text className="text-white">{t("cancel")}</Text>
                                 </Pressable>
 
                                 <Pressable
@@ -102,7 +153,7 @@ export default function Bookings() {
                                         });
                                     }}
                                 >
-                                    <Text className="text-white">עדכן</Text>
+                                    <Text className="text-white">{t("update")}</Text>
                                 </Pressable>
                             </View>
                         </View>

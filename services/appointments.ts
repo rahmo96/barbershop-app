@@ -19,7 +19,7 @@ export async function getUserAppointments(userId: string, statuses: string[] = [
             q = query(
                 collection(db, "appointments"),
                 where("userId", "==", userId),
-                where("status", "in", statuses),   // ✅ כאן אנחנו אומרים OR
+                where("status", "in", statuses),
                 orderBy("date", "desc"),
                 orderBy("time", "desc")
             );

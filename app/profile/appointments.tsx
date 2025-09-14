@@ -1,8 +1,8 @@
 // app/(tabs)/appointments.tsx
 import React, { useMemo, useState, useEffect } from "react";
-import {View, Text, Pressable, Alert, ActivityIndicator} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Calendar, LocaleConfig } from "react-native-calendars";
+import { View, Alert, ActivityIndicator, ScrollView } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Calendar } from "react-native-calendars";
 import { useColorScheme } from "react-native";
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
 import Heading from "@/components/Heading";
@@ -10,41 +10,28 @@ import RoundedButton from "@/components/RoundedButtons";
 import { useUser } from "@/context/UserContext";
 import { getTimeSlots } from "@/services/timeSlots";
 import NormalText from "@/components/NormalText";
-
-LocaleConfig.locales["he"] = {
-    monthNames: [
-        "ינואר","פברואר","מרץ","אפריל","מאי","יוני",
-        "יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"
-    ],
-    monthNamesShort: ["ינו","פבר","מרץ","אפר","מאי","יונ","יול","אוג","ספט","אוק","נוב","דצ"],
-    dayNames: ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"],
-    dayNamesShort: ["א׳","ב׳","ג׳","ד׳","ה׳","ו׳","ש׳"],
-};
-LocaleConfig.defaultLocale = "he";
-
-function LoadingScreen() {
-    return (
-        <SafeAreaView className="flex-1 items-center justify-center bg-primary-light dark:bg-primary-dark">
-            <Heading title="טוען..." />
-        </SafeAreaView>
-    );
-}
+import LoadingScreen from "@/components/LoadingScreen";
+import TimeSlotGrid, { TimeSlot } from "@/components/TimeSlotGrid";
+import { useLocalization } from "@/context/LocalizationContext";
 
 export default function Appointments() {
     const router = useRouter();
     const { current, loading } = useUser();
+    const { t } = useLocalization();
     const isDark = useColorScheme() === "dark";
 
-    const { id: serviceId, title, variantId, description, addOns, price, duration } = useLocalSearchParams();
+    const { id: serviceId, variantId, description, addOns, price, duration } =
+        useLocalSearchParams();
+    const { title } = useLocalSearchParams() as { title: string };
 
     const today = new Date().toISOString().slice(0, 10);
     const [selectedDate, setSelectedDate] = useState(today);
-    const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-
-    const [slots, setSlots] = useState<{ time: string; available: boolean }[]>([]);
+    const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+    const [slots, setSlots] = useState<TimeSlot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(true);
 
-// In appointments.tsx - update the useEffect hook that loads slots
+
+    // Load slots
     useEffect(() => {
         async function loadSlots() {
             setLoadingSlots(true);
@@ -53,14 +40,11 @@ export default function Appointments() {
                     const result = await getTimeSlots(selectedDate);
                     setSlots(result);
                 } else {
-                    // If no barber is selected, show an empty list or default slots
                     setSlots([]);
-                    // Alternatively, you could show a message to select a barber first
                 }
             } catch (err) {
                 console.error("Failed to load slots:", err);
                 setSlots([]);
-                // Consider showing an error message to the user
             } finally {
                 setLoadingSlots(false);
             }
@@ -68,6 +52,7 @@ export default function Appointments() {
         loadSlots();
     }, [selectedDate]);
 
+    // Marked dates
     const markedDates = useMemo(
         () => ({
             [selectedDate]: {
@@ -84,11 +69,11 @@ export default function Appointments() {
 
     const onConfirm = () => {
         if (!selectedSlot) {
-            Alert.alert("שגיאה", "אנא בחר שעה לפני האישור");
+            Alert.alert(t("error"), t("pleaseSelectTime"));
             return;
         }
         if (!serviceId) {
-            Alert.alert("שגיאה", "חסר מזהה שירות. נסה שוב.");
+            Alert.alert(t("error"), "Missing service id");
             return;
         }
 
@@ -96,102 +81,88 @@ export default function Appointments() {
             pathname: "/confirm",
             params: {
                 id: serviceId,
+                serviceId: serviceId,
                 variantId: variantId || "",
                 addOns: JSON.stringify(addOns || []),
-                title: title,
-                description: description,
+                title,
+                description,
                 date: selectedDate,
-                time: selectedSlot,
+                time: selectedSlot?.time,
                 price: price || 0,
                 duration: duration || 0,
             },
         });
     };
 
+    // Calendar theme
     const calendarTheme = {
-        backgroundColor: isDark ? "#1e293b" : "#ffffff",
-        calendarBackground: isDark ? "#1e293b" : "#ffffff",
-        textSectionTitleColor: isDark ? "#e2e8f0" : "#334155",
+        backgroundColor: isDark ? "#000000" : "#ffffff",
+        calendarBackground: isDark ? "#000000" : "#ffffff",
+        textSectionTitleColor: isDark ? "#b6c1cd" : "#b6c1cd",
         selectedDayBackgroundColor: isDark ? "#6faaf6" : "#358bf8",
         selectedDayTextColor: "#ffffff",
-        todayTextColor: isDark ? "#6faaf6" : "#358bf8",
-        dayTextColor: isDark ? "#e2e8f0" : "#334155",
-        textDisabledColor: isDark ? "#475569" : "#cbd5e1",
-        arrowColor: isDark ? "#e2e8f0" : "#334155",
-        monthTextColor: isDark ? "#e2e8f0" : "#334155",
+        todayTextColor: "#00adf5",
+        dayTextColor: isDark ? "#ffffff" : "#2d4150",
+        textDisabledColor: isDark ? "#4f4f4f" : "#d9e1e8",
+        arrowColor: isDark ? "#b6c1cd" : "#00adf5",
+        monthTextColor: isDark ? "#ffffff" : "#2d4150",
+        textMonthFontWeight: "bold" as const,
+        textDayHeaderFontWeight: "bold" as const,
+        textDayFontSize: 16,
+        textMonthFontSize: 16,
+        textDayHeaderFontSize: 14,
     };
 
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-black justify-center">
-            <View className="px-4 mb-8 items-center">
-                <Heading title="בחר תאריך ושעה" className="my-4 text-right" center={false} />
-            </View>
+            <ScrollView>
+                <View className="px-4 mb-8 items-center">
+                    <Heading title={t("bookAppointment")} className="my-4 text-right" center={false} />
+                </View>
 
-            {/* לוח שנה */}
-            <Calendar
-                minDate={new Date().toISOString().slice(0, 10)}
-                maxDate={new Date(new Date().setMonth(new Date().getMonth() + 2))
-                    .toISOString().slice(0, 10)}                markedDates={markedDates}
-                onDayPress={(d) => {
-                    setSelectedDate(d.dateString);
-                    setSelectedSlot(null);
-                }}
-                theme={calendarTheme}
-                enableSwipeMonths
-                firstDay={0}
-                style={{ marginHorizontal: 16, borderRadius: 12 }}
-            />
+                {/* Calendar */}
+                <Calendar
+                    minDate={new Date().toISOString().slice(0, 10)}
+                    maxDate={new Date(new Date().setMonth(new Date().getMonth() + 2))
+                        .toISOString()
+                        .slice(0, 10)}
+                    markedDates={markedDates}
+                    onDayPress={(d) => {
+                        setSelectedDate(d.dateString);
+                        setSelectedSlot(null);
+                    }}
+                    theme={calendarTheme}
+                    enableSwipeMonths
+                    firstDay={0}
+                    style={{ marginHorizontal: 16, borderRadius: 12 }}
+                />
 
-            {/* שעות זמינות */}
-            <View className="px-4 mt-4">
-                <NormalText className="text-xl mb-2 text-black dark:text-white text-right">
-                    שעות זמינות ל־{selectedDate}:
-                </NormalText>
+                {/* Slots */}
+                <View className="mt-6 mx-4">
+                    <Heading title={t("selectTime")} className="text-lg" />
+                    <NormalText>{`${t("for")} ${t(title)}`}</NormalText>
 
-                <View className="flex-row flex-wrap justify-center">
                     {loadingSlots ? (
-                        <NormalText className="text-black dark:text-white">טוען שעות...</NormalText>
-                    ) : slots.length === 0 ? (
-                        <NormalText className="text-black dark:text-white">אין שעות זמינות</NormalText>
+                        <View className="items-center justify-center mt-4">
+                            <ActivityIndicator size="large" />
+                        </View>
+                    ) : slots.length > 0 ? (
+                        <TimeSlotGrid slots={slots} selectedSlot={selectedSlot} onSelectSlot={setSelectedSlot} />
                     ) : (
-                        slots.map(({ time, available }) => (
-                            <Pressable
-                                key={time}
-                                disabled={!available}
-                                onPress={() => setSelectedSlot(time)}
-                                className= {`m-1 px-4 py-2 rounded-lg border ${
-                                    selectedSlot === time
-                                        ? "bg-primary-600 dark:bg-primary-300" 
-                                        : available
-                                            ? "bg-white dark:bg-gray-800 border-primary-600 dark:border-primary-300"  // Available slots with brand color border
-                                            : "bg-gray-200 dark:bg-red-300 border-primary-300"  // Unavailable slots
-                                }`}
-                            >
-                                <NormalText
-                                    className={` text-sm ${
-                                        selectedSlot === time
-                                            ? "text-white"  // White text on selected
-                                            : available
-                                                ? "text-black dark:text-white"  // Brand text for available
-                                                : "text-gray-500 line-through"  // Gray text for unavailable
-                                    }`}
-                                >
-                                    {time}
-                                </NormalText>
-                            </Pressable>
-                        ))
+                        <View className="items-center justify-center mt-4">
+                            <NormalText>{t("noAvailableSlots")}</NormalText>
+                        </View>
                     )}
-                </View>
 
-                {/* כפתור אישור */}
-                <View className="mt-6">
-                    <RoundedButton
-                        text={selectedSlot ? "אישור" : "בחר שעה"}
-                        disabled={!selectedSlot}
-                        onPress={onConfirm}
-                    />
+                    <View className="mt-6">
+                        <RoundedButton
+                            text={selectedSlot ? t("confirm") : t("selectTime")}
+                            disabled={!selectedSlot}
+                            onPress={onConfirm}
+                        />
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }

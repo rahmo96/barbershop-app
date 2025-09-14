@@ -1,186 +1,227 @@
-import React, { useMemo, useState } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+// app/service-details.tsx
+import React, { useState, useEffect, useMemo } from "react";
+import { View, ScrollView, Image, TouchableOpacity, ImageSourcePropType } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useUser } from "@/context/UserContext";
+import { useLocalization } from "@/context/LocalizationContext";
 import Heading from "@/components/Heading";
+import NormalText from "@/components/NormalText";
 import RoundedButton from "@/components/RoundedButtons";
+import { getServiceById } from "@/services/services";
+import LoadingScreen from "@/components/LoadingScreen";
 
-type Variant = { id: string; name: string; priceDelta: number; durationDelta: number };
-type AddOn   = { id: string; name: string; priceDelta: number; durationDelta?: number };
-
-const SERVICES: Record<string, {
+interface ServiceVariant { id: string; name: string; price: number; duration: number; }
+interface ServiceAddOn { id: string; name: string; price: number; duration: number; }
+interface Service {
     id: string;
-    title: string;
-    basePrice: number;
-    baseDuration: number;
+    name: string;
     description: string;
-    variants: Variant[];
-    addOns: AddOn[];
-}> = {
-    "1": {
-        id: "1",
-        title: "תספורת",
-        basePrice: 25,
-        baseDuration: 30,
-        description: "תספורת מקצועית כולל שטיפה, חיתוך וסטיילינג.",
-        variants: [
-            { id: "classic",   name: "קלאסית",         priceDelta: 0,  durationDelta: 0 },
-            { id: "fade",      name: "פייד / סקין",    priceDelta: 10, durationDelta: 10 },
-            { id: "scissors",  name: "מספריים בלבד",   priceDelta: 5,  durationDelta: 5  },
-            { id: "kids",      name: "ילדים",          priceDelta: -5, durationDelta: -5 },
-        ],
-        addOns: [
-            { id: "wash",   name: "חפיפה",          priceDelta: 5,  durationDelta: 5 },
-            { id: "style",  name: "פיניש סטייל",   priceDelta: 5 },
-        ],
-    },
-    "2" :{
-        id: "2",
-        title: "תספורת וזקן",
-        basePrice: 15,
-        baseDuration: 30,
-        description: "תספורת מקצועית כולל שטיפה, חיתוך וסטיילינג.",
-        variants: [],
-        addOns: [
-            { id: "wash",   name: "חפיפה",          priceDelta: 5,  durationDelta: 5 },
-            { id: "style",  name: "פיניש סטייל",   priceDelta: 5 },
-        ],
-    },
-    "3" :{
-        id: "3",
-        title: "תספורת זקן צבע",
-        basePrice: 45,
-        baseDuration: 30,
-        description: "תספורת מקצועית כולל שטיפה, חיתוך וסטיילינג.",
-        variants: [],
-        addOns: [
-            { id: "wash",   name: "חפיפה",          priceDelta: 5,  durationDelta: 5 },
-            { id: "style",  name: "פיניש סטייל",   priceDelta: 5 },
-        ],
-    }
-
-};
+    image: string | ImageSourcePropType;
+    variants: ServiceVariant[];
+    addOns?: ServiceAddOn[];
+}
 
 export default function ServiceDetails() {
+    const { id } = useLocalSearchParams<{ id?: string }>();
     const router = useRouter();
-    const { id = "1" } = useLocalSearchParams();
-    const service = SERVICES[String(id)] ?? SERVICES["1"];
+    const { current } = useUser();
+    const { t, locale } = useLocalization();
 
-    const [variantId, setVariantId] = useState<string>(service.variants[0]?.id ?? "");
-    const [addOnIds, setAddOnIds]   = useState<string[]>([]);
+    const [service, setService] = useState<Service | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [variantId, setVariantId] = useState("");
+    const [addOnIds, setAddOnIds] = useState<string[]>([]);
 
-    const variant = useMemo(
-        () => service.variants.find(v => v.id === variantId),
-        [service.variants, variantId]
-    );
+    const isRTL = locale === "he";
 
-    const totalPrice = useMemo(() => {
-        const addOnsPrice = addOnIds.reduce((s, aId) => {
-            const a = service.addOns.find(x => x.id === aId);
-            return s + (a?.priceDelta ?? 0);
-        }, 0);
-        return service.basePrice + (variant?.priceDelta ?? 0) + addOnsPrice;
-    }, [service, variant, addOnIds]);
+    // helper: translate with fallback
+    const tr = (key: string, fallback: string) => {
+        const v = t(key);
+        return v === key ? fallback : v;
+    };
 
-    const totalDuration = useMemo(() => {
-        const addOnsDur = addOnIds.reduce((s, aId) => {
-            const a = service.addOns.find(x => x.id === aId);
-            return s + (a?.durationDelta ?? 0);
-        }, 0);
-        return service.baseDuration + (variant?.durationDelta ?? 0) + addOnsDur;
-    }, [service, variant, addOnIds]);
+    useEffect(() => {
+        async function fetchServiceDetails() {
+            if (!id) { router.back(); return; }
+            try {
+                setLoading(true);
+                const serviceData = await getServiceById(id as string);
+                if (!serviceData || !serviceData.name || !serviceData.description || !serviceData.variants) {
+                    router.back();
+                    return;
+                }
+                setService(serviceData as Service);
+                if (serviceData.variants?.length) setVariantId(serviceData.variants[0].id);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchServiceDetails();
+    }, [id, router]);
 
-    const toggleAddOn = (aId: string) =>
-        setAddOnIds(prev => prev.includes(aId) ? prev.filter(x => x !== aId) : [...prev, aId]);
+    const selectedVariant = service?.variants.find(v => v.id === variantId);
+    const selectedAddOns = (service?.addOns || []).filter(a => addOnIds.includes(a.id));
 
+    const totalPrice = (selectedVariant?.price || 0) + selectedAddOns.reduce((s, a) => s + a.price, 0);
+    const totalDuration = (selectedVariant?.duration || 0) + selectedAddOns.reduce((s, a) => s + a.duration, 0);
+
+    const imageSource = useMemo(() => {
+        if (!service?.image) return undefined;
+        return typeof service.image === "string" ? { uri: service.image } : service.image;
+    }, [service?.image]);
+
+    const handleVariantSelect = (vid: string) => setVariantId(vid);
+    const handleAddOnToggle = (aid: string) =>
+        setAddOnIds(prev => (prev.includes(aid) ? prev.filter(x => x !== aid) : [...prev, aid]));
+
+    const handleContinue = () => {
+        if (!service || !selectedVariant) return;
+        if (!current) { router.push("/login"); return; }
+        router.push({
+            pathname: "/profile/appointments",
+            params: {
+                id: service.id,
+                serviceId: service.id,
+                title: service.name,
+                description: service.description,
+                variantId,
+                addOns: addOnIds.join(","),
+                price: String(totalPrice),
+                duration: String(totalDuration),
+            },
+        });
+    };
+
+    if (loading) return <LoadingScreen />;
+    if (!service) {
+        return (
+            <View className="flex-1 items-center justify-center p-4">
+                <NormalText>{t("serviceNotFound")}</NormalText>
+                <RoundedButton text={t("goBack")} onPress={() => router.back()} className="mt-4" />
+            </View>
+        );
+    }
+
+    const serviceName = tr(`service_${service.id}_name`, service.name);
 
     return (
-        <SafeAreaView className="flex-1 bg-primary-50 dark:bg-black">
-            <ScrollView className="flex-1 px-4">
-                <Heading title={service.title} className="my-4 text-right" center={false} />
+        <ScrollView className="flex-1 bg-white dark:bg-gray-900">
+            {imageSource && <Image source={imageSource} className="w-full h-64" resizeMode="cover" />}
 
-                <View className="h-40 bg-gray-200 dark:bg-gray-800 rounded-xl mb-4" />
+            <View className="p-4 ">
+                <Heading title={t(serviceName)} center={true} />
 
-                {/* וריאנטים (סוג תספורת) */}
-                <Text className="text-black dark:text-white mb-2 text-right" style={{ writingDirection: "rtl" }}>
-                    בחר סוג תספורת:
-                </Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">
-                    <View className="flex-row gap-2">
-                        {service.variants.map(v => {
-                            const selected = v.id === variantId;
-                            return (
-                                <Pressable
-                                    key={v.id}
-                                    onPress={() => setVariantId(v.id)}
-                                    className={[
-                                        "px-4 py-2 rounded-full border bg-primary-300 dark:bg-primary-600",
-                                        selected
-                                            ? "border-primary"
-                                            : "bg-transparent border-primary"
-                                    ].join(" ")}
-                                >
-                                    <Text className={selected ? "text-black dark:text-white font-semibold " : "text-black dark:text-white"}>
-                                        {v.name}
-                                    </Text>
-                                </Pressable>
-                            );
-                        })}
+                {/* Variants */}
+                {!!service.variants.length && (
+                    <View className="mb-6">
+                        <Heading style={{ fontSize: 18 }} title={t("chooseVariant")} />
+                        <View className="mt-2 space-y-2">
+                            {service.variants.map(variant => {
+                                const isSelected = variantId === variant.id;
+                                const vName = tr(`service_${service.id}_variant_${variant.id}_name`, variant.name);
+
+                                const a11yLabel =
+                                    tr("a11y.variant_option_label",
+                                        `${vName}, ${variant.duration} ${t("minutes")}, ₪${variant.price}`
+                                    );
+                                const a11yHint = isSelected
+                                    ? tr("a11y.variant_selected_hint", "נבחר. הקש לביטול או לבחירה אחרת")
+                                    : tr("a11y.variant_select_hint", "הקש לבחירה");
+
+                                return (
+                                    <TouchableOpacity
+                                        key={variant.id}
+                                        onPress={() => handleVariantSelect(variant.id)}
+                                        className={`p-3 rounded-lg border ${
+                                            isSelected
+                                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                                                : "border-gray-300 dark:border-gray-700"
+                                        }`}
+                                        accessibilityRole="button"
+                                        accessibilityState={{ selected: isSelected }}
+                                        accessibilityLabel={a11yLabel}
+                                        accessibilityHint={a11yHint}
+                                        testID={`variant-${variant.id}`}
+                                    >
+                                        <View className="flex-row justify-between">
+                                            <NormalText className="font-bold">{t(vName)}</NormalText>
+                                            <NormalText>₪{variant.price}</NormalText>
+                                        </View>
+                                        <NormalText className="text-sm text-gray-500 dark:text-gray-400">
+                                            {variant.duration} {t("minutes")}
+                                        </NormalText>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
                     </View>
-                </ScrollView>
+                )}
 
-                {/* תוספים (אופציונלי) */}
-                <Text className="text-black dark:text-white 0 mb-2 text-right" style={{ writingDirection: "rtl" }}>
-                    תוספים:
-                </Text>
-                <View className="mb-4 ">
-                    {service.addOns.map(a => {
-                        const selected = addOnIds.includes(a.id);
-                        return (
-                            <Pressable
-                                key={a.id}
-                                onPress={() => toggleAddOn(a.id)}
-                                className="flex-row items-center justify-between bg-primary-300 dark:bg-primary-700 rounded-xl px-4 py-3 mb-2"
-                            >
-                                <Text className=" text-black dark:text-white text-right flex-1" style={{ writingDirection: "rtl" }}>
-                                    {a.name}
-                                </Text>
-                                <Text className="text-black dark:text-white mr-3">
-                                    {a.priceDelta >= 0 ? `+₪${a.priceDelta}` : `-₪${Math.abs(a.priceDelta)}`}
-                                </Text>
-                                <View className={`w-5 h-5 rounded border ${selected ? "bg-black dark:bg-white" : "border-primary bg-gray-500"}`} />
-                            </Pressable>
-                        );
-                    })}
-                </View>
+                {/* Add-ons */}
+                {!!service.addOns?.length && (
+                    <View className="mb-6">
+                        <Heading style={{ fontSize: 18 }} title={t("optionalAddOns")} />
+                        <View className="mt-2 space-y-2">
+                            {service.addOns!.map(addOn => {
+                                const selected = addOnIds.includes(addOn.id);
+                                const aName = tr(`service_${service.id}_addon_${addOn.id}_name`, addOn.name);
 
-                {/* סיכום מחיר/זמן */}
-                <View className="flex-row justify-between mb-2">
-                    <Text className="text-lg text-black dark:text-white">מחיר:</Text>
-                    <Text className="text-lg font-bold text-black dark:text-white">₪{totalPrice}</Text>
-                </View>
-                <View className="flex-row justify-between mb-6">
-                    <Text className="text-lg text-black dark:text-white">משך:</Text>
-                    <Text className="text-lg font-bold text-black dark:text-white">{totalDuration} דק׳</Text>
+                                const a11yLabel =
+                                    tr("a11y.addon_option_label",
+                                        `${aName}, ${addOn.duration} ${t("minutes")}, ₪${addOn.price}`
+                                    );
+                                const a11yHint = selected
+                                    ? tr("a11y.addon_selected_hint", "נבחר. הקש לביטול")
+                                    : tr("a11y.addon_select_hint", "הקש לבחירה");
+
+                                return (
+                                    <TouchableOpacity
+                                        key={addOn.id}
+                                        onPress={() => handleAddOnToggle(addOn.id)}
+                                        className={`p-3 rounded-lg border ${
+                                            selected
+                                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                                                : "border-gray-300 dark:border-gray-700"
+                                        }`}
+                                        accessibilityRole="checkbox"
+                                        accessibilityState={{ checked: selected }}
+                                        accessibilityLabel={a11yLabel}
+                                        accessibilityHint={a11yHint}
+                                        testID={`addon-${addOn.id}`}
+                                    >
+                                        <View className="flex-row justify-between">
+                                            <NormalText className="font-bold">{t(aName)}</NormalText>
+                                            <NormalText>₪{addOn.price}</NormalText>
+                                        </View>
+                                        <NormalText className="text-sm text-gray-500 dark:text-gray-400">
+                                            {addOn.duration} {t("minutes")}
+                                        </NormalText>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    </View>
+                )}
+
+                {/* Summary */}
+                <View className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    <View className="flex-row justify-between mb-2">
+                        <NormalText className="font-bold">{t("totalPrice")}</NormalText>
+                        <NormalText className="font-bold">₪{totalPrice}</NormalText>
+                    </View>
+                    <View className="flex-row justify-between">
+                        <NormalText>{t("duration")}</NormalText>
+                        <NormalText>{totalDuration} {t("minutes")}</NormalText>
+                    </View>
                 </View>
 
                 <RoundedButton
-                    text="קבע תור"
-                    route={{
-                        pathname: "/profile/appointments",
-                        params: {
-                            id: service.id,
-                            title: service.title,   // ← הוספתי את השם
-                            variantId,
-                            description: service.title + " " + variant?.name + " " + addOnIds.map(aId => service.addOns.find(a => a.id === aId)?.name).join(", "),
-                            addOns: addOnIds.join(","),
-                            price: String(totalPrice),
-                            duration: String(totalDuration),
-                        },
-                    }}
+                    text={t("continue")}
+                    onPress={handleContinue}
+                    disabled={!selectedVariant}
+                    className="mt-2"
                 />
-
-            </ScrollView>
-        </SafeAreaView>
+            </View>
+        </ScrollView>
     );
 }

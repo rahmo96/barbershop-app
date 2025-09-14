@@ -2,7 +2,7 @@
 import { useUser } from "@/context/UserContext"
 import { ActivityIndicator } from 'react-native'
 import Heading from "@/components/Heading";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect } from "expo-router";
 
 // @ts-ignore

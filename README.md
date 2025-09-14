@@ -72,8 +72,7 @@ barbershop/
 │   ├── services/        # Firebase and API service functions
 │   ├── utils/           # Utility functions
 │   ├── globals.css      # Tailwind CSS configuration
-│   ├── _layout.tsx      # Root layout configuration
-│   └── splash.tsx       # Splash screen
+│   └── _layout.tsx      # Root layout configuration
 ├── assets/              # Static assets (images, fonts, videos)
 ├── .github/             # GitHub Actions workflows for CI/CD
 ├── babel.config.js      # Babel configuration
@@ -147,13 +146,6 @@ Contributions are welcome! To contribute:
    git push origin feature/your-feature-name
    ```
 5. Open a pull request.
-
----
-
-## **License**
-This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## **Contact**
 For questions or support, please contact:

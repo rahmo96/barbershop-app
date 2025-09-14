@@ -10,7 +10,7 @@ import {
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: ${{ secrets.apiKey }},
+    apiKey: process.env.EXPO_PUBLIC_API_KEY,
     authDomain: "barbershop-app-d8e62.firebaseapp.com",
     projectId: "barbershop-app-d8e62",
     storageBucket: "barbershop-app-d8e62.firebasestorage.app",
