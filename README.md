@@ -1,42 +1,52 @@
-Here’s a **README.md** file tailored for your **Barbershop** project. It includes an overview, setup instructions, and usage details based on the provided project context.
+# Barbershop App
 
----
+A modern mobile application for barbershop service booking and management built with React Native and Expo.
 
-# **Barbershop App**
+## Features
 
-Welcome to the **Barbershop App**, a modern and user-friendly mobile application for managing barbershop services, appointments, and user profiles. This app is built using **React Native** and **Expo**, providing a seamless experience for both customers and barbers.
+- **User Authentication**: Secure login and registration system
+- **Service Browsing**: View available haircut and grooming services
+- **Appointment Booking**: Schedule, reschedule, and cancel appointments
+- **User Profiles**: Manage personal information and view appointment history
+- **Multi-language Support**: Available in multiple languages
+- **Dark Mode**: Fully responsive light and dark theme support
+- **Animated UI**: Smooth transitions and interactive elements
 
----
+## Tech Stack
 
-## **Features**
-- **User Authentication**: Login and registration functionality with secure user management.
-- **Service Listings**: Browse available services with detailed descriptions, pricing, and durations.
-- **Appointment Booking**: Schedule appointments with real-time availability.
-- **Profile Management**: Update user profiles and view appointment history.
-- **Dark Mode Support**: Adaptive UI for light and dark themes.
-- **Animations**: Smooth and interactive animations for enhanced user experience.
-
----
-
-## **Tech Stack**
-- **Frontend**: React Native, Expo
-- **Backend**: Firebase (Authentication, Firestore)
-- **State Management**: Context API
-- **Styling**: Tailwind CSS (via NativeWind)
-- **Routing**: Expo Router
+- **Frontend**: React Native with Expo
+- **Navigation**: Expo Router
+- **Styling**: NativeWind (Tailwind CSS for React Native)
+- **State Management**: React Context API
+- **Authentication**: Firebase Authentication
+- **Database**: Firestore
 - **Animations**: React Native Reanimated
+- **Localization**: Custom localization context
 
----
+## Project Structure
 
-## **Getting Started**
+```
+barbershop/
+├── app/                  # Main application screens
+│   ├── (auth)/           # Authentication screens (login, register)
+│   ├── (tabs)/           # Main app tabs (home, profile, services, bookings)
+├── components/           # Reusable UI components
+├── context/              # React Context providers
+├── services/             # Firebase service functions
+├── utils/                # Utility functions and Firebase config
+├── assets/               # Static assets and images
+```
 
-### **Prerequisites**
-Ensure you have the following installed:
-- **Node.js** (v18 or later)
-- **npm** or **yarn**
-- **Expo CLI**: Install via `npm install -g expo-cli`
+## Getting Started
 
-### **Installation**
+### Prerequisites
+
+- Node.js (v14 or newer)
+- npm or yarn
+- Expo CLI (`npm install -g expo-cli`)
+
+### Installation
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/barbershop.git
@@ -46,112 +56,34 @@ Ensure you have the following installed:
 2. Install dependencies:
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-3. Set up Firebase:
-   - Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
-   - Enable **Authentication** and **Firestore Database**.
-   - Download the `google-services.json` (for Android) and `GoogleService-Info.plist` (for iOS) files and place them in the appropriate directories.
-   - Update the Firebase configuration in the project.
+3. Set up your Firebase configuration in `utils/firebase.ts`
 
 4. Start the development server:
    ```bash
-   expo start
+   npx expo start
    ```
 
----
+## Firebase Setup
 
-## **Project Structure**
-```
-barbershop/
-├── app/
-│   ├── (auth)/          # Authentication screens (login, register)
-│   ├── (tabs)/          # Main app screens (profile, services, bookings)
-│   ├── components/      # Reusable UI components
-│   ├── context/         # Context API for state management
-│   ├── services/        # Firebase and API service functions
-│   ├── utils/           # Utility functions
-│   ├── globals.css      # Tailwind CSS configuration
-│   └── _layout.tsx      # Root layout configuration
-├── assets/              # Static assets (images, fonts, videos)
-├── .github/             # GitHub Actions workflows for CI/CD
-├── babel.config.js      # Babel configuration
-├── app.json             # Expo configuration
-├── package.json         # Project dependencies and scripts
-└── README.md            # Project documentation
-```
+1. Create a new Firebase project
+2. Enable Authentication with Email/Password
+3. Create a Firestore database
+4. Add your Firebase configuration to the project
 
----
+## Contributing
 
-## **Available Scripts**
-- **Start Development Server**:
-  ```bash
-  expo start
-  ```
-- **Build for Production**:
-  ```bash
-  expo build
-  ```
-- **Run Tests**:
-  ```bash
-  npm test
-  ```
-- **Lint Code**:
-  ```bash
-  npm run lint
-  ```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
----
+## License
 
-## **Key Features in Detail**
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-### **Authentication**
-- Users can register, log in, and log out securely.
-- Redirects to the profile page upon successful login.
+## Contact
 
-### **Services**
-- Displays a list of services with descriptions, prices, and images.
-- Allows users to select service variants and add-ons.
-
-### **Appointments**
-- Users can view available time slots and book appointments.
-- Includes functionality to update or cancel existing appointments.
-
-### **Profile Management**
-- Users can view and edit their profile information.
-- Displays a list of past and upcoming appointments.
-
----
-
-## **CI/CD Pipeline**
-This project uses **GitHub Actions** for Continuous Integration and Deployment:
-- **Build and Test**: Automatically runs tests and builds the app on every push to the `main` branch.
-- **Deployment**: Deploys the app to a hosting service (e.g., Vercel or Firebase).
-
----
-
-## **Contributing**
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add your message here"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. Open a pull request.
-
-## **Contact**
 For questions or support, please contact:
-- **Email**: raha1996@gmail.com
-- **GitHub**: [rahmo96](https://github.com/rahmo96)
-
----
-
-Let me know if you'd like to customize this further!
+- Email: raha1996@gmail.com
+- GitHub: [rahmo96](https://github.com/rahmo96)
