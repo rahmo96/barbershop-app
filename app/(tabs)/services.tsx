@@ -32,9 +32,13 @@ interface Service {
 export default function Services() {
     const { current } = useUser();
     const router = useRouter();
-    const { t } = useLocalization();
+    const { t, locale } = useLocalization();
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Set RTL or LTR direction based on language
+    const isRTL = locale === 'he';
+    const textAlign = isRTL ? 'right' : 'left';
 
     // Fetch services on component mount
     useEffect(() => {
@@ -75,20 +79,34 @@ export default function Services() {
                 index={index}
                 onPress={() => handlePress(item)}
             >
-                {/* Content rendered inside AnimatedCard */}
                 <View className="p-4">
-                    <Heading title={t(item.name)} center={false} />
-                    <NormalText center={false}>{item.description}</NormalText>
+                    {/* שם השירות */}
+                    <Heading title={t(item.name)} center={true} />
 
-                    <View className="flex-row justify-between mt-2">
-                        <Text className="font-bold">₪{startingPrice}</Text>
-                        {item.image && (
+                    {/* תיאור השירות */}
+                    <NormalText
+                        className="text-sm mt-1 text-center"
+
+                    >
+                        {t(item.description)}
+                    </NormalText>
+
+                    {/* מחיר מתחת לשם השירות */}
+                    <Text
+                        className="text-lg font-extrabold text-green-600 dark:text-green-400 mt-2 text-center"
+                    >
+                        ₪{startingPrice}
+                    </Text>
+
+                    {/* תמונה בצד ימין/שמאל לפי כיוון */}
+                    {item.image && (
+                        <View className="mt-3 items-end items-center">
                             <Image
                                 source={{ uri: item.image }}
-                                className="w-16 h-16 rounded-full"
+                                className="w-12 h-12 rounded-full "
                             />
-                        )}
-                    </View>
+                        </View>
+                    )}
                 </View>
             </AnimatedCard>
         );
@@ -104,8 +122,8 @@ export default function Services() {
 
     return (
         <SafeAreaView className="flex-1 p-4 bg-white dark:bg-gray-900">
-            <Heading title={t("ourServices")} />
-            <NormalText className="mb-4">{t("servicesDescription")}</NormalText>
+            <Heading title={t("ourServices")} style={{ textAlign }} />
+            <NormalText className="mb-4" style={{ textAlign }}>{t("servicesDescription")}</NormalText>
 
             <FlatList
                 data={services}
@@ -113,6 +131,7 @@ export default function Services() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 20 }}
                 renderItem={renderServiceCard}
+                className="bg-primary-100 dark:bg-primary-900 rounded-lg"
             />
         </SafeAreaView>
     );

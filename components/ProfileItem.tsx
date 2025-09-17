@@ -34,14 +34,14 @@ export function ProfileItem({
         >
             <Animated.View
                 style={animatedStyle}
-                className="flex-row-reverse items-center py-3 border-b border-gray-100 dark:border-gray-700"
+                className="flex-row-reverse justify-center items-center py-3 border-b border-gray-100 dark:border-gray-700"
             >
                 <View
                     className={`w-8 h-8 rounded-full ${color} items-center justify-center mr-3`}
                 >
                     {icon}
                 </View>
-                <Text className="text-black dark:text-white">{title}</Text>
+                <Text className="text-black dark:text-white ml-6 mr-6">{title} </Text>
             </Animated.View>
         </Pressable>
     );

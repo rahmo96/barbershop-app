@@ -297,6 +297,7 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
 
     // Translation function
     const t = (key: string): string => {
+        // @ts-ignore
         return translations[locale]?.[key] || translations.en[key] || key;
     };
 
