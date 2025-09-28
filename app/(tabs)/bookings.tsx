@@ -141,7 +141,7 @@ export default function Bookings() {
                                     className="bg-blue-500 px-8 py-3 rounded-lg"
                                     onPress={() => {
                                         router.push({
-                                            pathname: "/updateAppointment",
+                                            pathname: "/bookings/updateAppointment",
                                             params: {
                                                 id: item.id,
                                                 name: item.name,

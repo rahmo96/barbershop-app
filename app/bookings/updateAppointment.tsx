@@ -67,7 +67,7 @@ export default function UpdateAppointments() {
             }
         }
         loadSlots();
-    }, [selectedDate]);
+    }, [selectedDate, t]);
 
     // Marked dates for calendar
     const markedDates = useMemo(() => ({
@@ -88,7 +88,7 @@ export default function UpdateAppointments() {
         }
 
         router.push({
-            pathname: "/updateConfirm",
+            pathname: "/bookings/updateConfirm",
             params: {
                 appointmentId: params.id,
                 serviceId: params.serviceId,

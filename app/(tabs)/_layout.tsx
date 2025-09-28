@@ -1,72 +1,41 @@
 import React from "react";
-import { useColorScheme } from "react-native";
 import { Tabs } from "expo-router";
-import TabIcon from "@/components/TabIcon";
-import { icons } from "@/constants/icons";
 import { UserProvider } from "@/context/UserContext";
+import CustomTabBar from "@/components/CustomTabBar";
 
 export default function TabsLayout() {
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === "dark";
-
     return (
         <UserProvider>
             <Tabs
-                screenOptions={{
-                    headerShown: false,
-                    tabBarStyle: {
-                        backgroundColor: isDark ? "#0a101c" : "#ffffff",
-                        borderTopColor: "transparent",
-                        elevation: 0,
-                        shadowOpacity: 0.1,
-                        shadowRadius: 8,
-                        shadowOffset: { height: -3, width: 0 },
-                        height: 65,
-                        paddingBottom: 8,
-                    },
-                    tabBarActiveTintColor: isDark ? "#e8ebf1" : "#3b82f6",
-                    tabBarInactiveTintColor: isDark ? "#94a3b8" : "#64748b",
-                    tabBarLabelStyle: {
-                        fontSize: 12,
-                        fontWeight: "600",
-                        paddingTop: 3.5,
-                    },
-                }}
+                tabBar={(props) => <CustomTabBar {...props} />}
+                screenOptions={{ headerShown: false }}
             >
                 <Tabs.Screen
                     name="index"
                     options={{
                         title: "Home",
-                        tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.home} title="" />
-                        ),
+                        tabBarLabel: "Home",
                     }}
                 />
                 <Tabs.Screen
                     name="profile"
                     options={{
                         title: "Profile",
-                        tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.beard} title="" />
-                        ),
+                        tabBarLabel: "Profile",
                     }}
                 />
                 <Tabs.Screen
                     name="services"
                     options={{
                         title: "Services",
-                        tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.sccissors} title="" />
-                        ),
+                        tabBarLabel: "Services",
                     }}
                 />
                 <Tabs.Screen
                     name="bookings"
                     options={{
-                        title: "My Bookings",
-                        tabBarIcon: ({ focused }) => (
-                            <TabIcon focused={focused} icon={icons.calendar} title="" />
-                        ),
+                        title: "Bookings",
+                        tabBarLabel: "Bookings",
                     }}
                 />
             </Tabs>

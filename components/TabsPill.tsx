@@ -1,8 +1,7 @@
 // components/TabsPill.tsx
 import React from "react";
-import {ViewStyle, StyleProp, useColorScheme} from "react-native";
+import {ViewStyle, StyleProp, useColorScheme, Text} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Text } from "react-native";
 
 type Props = {
     width?: number;
@@ -12,9 +11,9 @@ type Props = {
 };
 
 export default function TabsPill({
-                                      style,
-                                      children,
-                                  }: Props) {
+                                     style,
+                                     children,
+                                 }: Props) {
     const colorScheme = useColorScheme()
     const theme = colorScheme === 'dark' ? 'dark' : 'light'
     return (
@@ -25,7 +24,6 @@ export default function TabsPill({
             start={{ x: 0.1, y: 0.0 }}
             end={{ x: 0.2, y: 1.0 }}
             style={style}
-
         >
             {children ?? <Text style={{ color: "#065F46", fontWeight: "600", fontStyle: "italic", fontSize: 16 }}></Text>}
         </LinearGradient>

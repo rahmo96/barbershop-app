@@ -279,7 +279,7 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
                     // Use your app's restart mechanism here
                     // For Expo, you might need to reload the entire app
                     if (locale === "he") {
-                        I18nManager.allowRTL(true);
+                        I18nManager.allowRTL(false);
                     } else {
                         I18nManager.allowRTL(false);
                     }

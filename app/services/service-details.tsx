@@ -25,14 +25,12 @@ export default function ServiceDetails() {
     const { id } = useLocalSearchParams<{ id?: string }>();
     const router = useRouter();
     const { current } = useUser();
-    const { t, locale } = useLocalization();
+    const { t } = useLocalization();
 
     const [service, setService] = useState<Service | null>(null);
     const [loading, setLoading] = useState(true);
     const [variantId, setVariantId] = useState("");
     const [addOnIds, setAddOnIds] = useState<string[]>([]);
-
-    const isRTL = locale === "he";
 
     // helper: translate with fallback
     const tr = (key: string, fallback: string) => {
