@@ -12,13 +12,13 @@ import {useRouter} from "expo-router";
 import {useLocalization} from "@/context/LocalizationContext";
 import {StatusBar} from "expo-status-bar";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import AnimatedScreen from "@/components/AnimatedScreen";
 
 export default function HomeScreen() {
     const router = useRouter();
-    const { t, locale } = useLocalization();
+    const { t } = useLocalization();
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
-    const textAlign = locale === 'he' ? 'right' : 'left';
 
     // Animation values
     const opacity = useSharedValue(0);
@@ -46,6 +46,7 @@ export default function HomeScreen() {
     }));
 
     return (
+        <AnimatedScreen type="fade" duration={400}>
         <SafeAreaView className="flex-1 bg-primary-50 dark:bg-gray-900">
             <StatusBar style={isDark ? 'light' : 'dark'} />
             <UserHeader />
@@ -59,10 +60,10 @@ export default function HomeScreen() {
                             className="w-40 h-40 rounded-full"
                             resizeMode="cover"
                         />
-                        <Text className="mt-4 text-3xl font-bold text-primary-800 dark:text-primary-200">
+                        <Text className="mt-4 justify-center text-3xl font-bold text-primary-800 dark:text-primary-200">
                             Elegant Cuts
                         </Text>
-                        <Text className="text-sm text-gray-500 dark:text-gray-400">
+                        <Text className="text-sm text-gray-500 dark:text-gray-400 justify-center">
                             {t('premiumBarberExperience')}
                         </Text>
                     </Animated.View>
@@ -70,16 +71,16 @@ export default function HomeScreen() {
                     {/* Main content */}
                     <Animated.View style={contentStyle} className="w-full">
                         {/* Welcome Section */}
-                        <View className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6">
+                        <View className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6 justify-center items-center">
                             <Text
                                 className="text-xl font-bold mb-3 text-primary-800 dark:text-primary-200"
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                             >
                                 {t('welcome')}
                             </Text>
                             <Text
-                                className="text-gray-600 dark:text-gray-300 mb-4"
-                                style={{ textAlign }}
+                                className="text-gray-600 dark:text-gray-300 mb-4 justify-center items-center"
+                                style={{ textAlign: "center" }}
                             >
                                 {t('welcomeMessage')}
                             </Text>
@@ -119,7 +120,7 @@ export default function HomeScreen() {
                         <View className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
                             <Text
                                 className="text-xl font-bold mb-4 text-primary-800 dark:text-primary-200"
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                             >
                                 {t('whyChooseUs')}
                             </Text>
@@ -132,13 +133,13 @@ export default function HomeScreen() {
                                 <View key={index} className="mb-4 last:mb-0">
                                     <Text
                                         className="text-lg font-semibold mb-1 text-gray-800 dark:text-gray-200"
-                                        style={{ textAlign }}
+                                        style={{ textAlign: "center" }}
                                     >
                                         {item.title}
                                     </Text>
                                     <Text
                                         className="text-gray-600 dark:text-gray-400"
-                                        style={{ textAlign }}
+                                        style={{ textAlign: "center" }}
                                     >
                                         {item.desc}
                                     </Text>
@@ -152,5 +153,6 @@ export default function HomeScreen() {
                 </View>
             </ScrollView>
         </SafeAreaView>
+        </AnimatedScreen>
     );
 }

@@ -18,8 +18,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import { useLocalization } from '@/context/LocalizationContext';
 
 export default function LoginScreen() {
-    const { t, locale } = useLocalization();
-    const textAlign = locale === 'he' ? 'right' : 'left';
+    const { t } = useLocalization();
     const keyboardVerticalOffset = Platform.select({ ios: 64, android: 0 });
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -72,7 +71,7 @@ export default function LoginScreen() {
                                 autoCapitalize="none"
                                 onChangeText={setEmail}
                                 value={email}
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                             />
 
                             <View className="h-3" />
@@ -83,7 +82,7 @@ export default function LoginScreen() {
                                 keyboardType="default"
                                 onChangeText={setPassword}
                                 value={password}
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                             />
 
                             <Pressable

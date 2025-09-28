@@ -9,6 +9,7 @@ import Heading from "@/components/Heading";
 import NormalText from "@/components/NormalText";
 import AnimatedCard from "@/components/AnimatedCard";
 import { getServices } from "@/services/services";
+import AnimatedScreen from "@/components/AnimatedScreen";
 
 // Define service types
 interface ServiceVariant {
@@ -32,13 +33,9 @@ interface Service {
 export default function Services() {
     const { current } = useUser();
     const router = useRouter();
-    const { t, locale } = useLocalization();
+    const { t,  } = useLocalization();
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
-
-    // Set RTL or LTR direction based on language
-    const isRTL = locale === 'he';
-    const textAlign = isRTL ? 'right' : 'left';
 
     // Fetch services on component mount
     useEffect(() => {
@@ -75,7 +72,8 @@ export default function Services() {
             : item.price;
 
         return (
-            <AnimatedCard
+            <AnimatedScreen type="fade" duration={400}>
+                <AnimatedCard
                 index={index}
                 onPress={() => handlePress(item)}
             >
@@ -100,7 +98,7 @@ export default function Services() {
 
                     {/* תמונה בצד ימין/שמאל לפי כיוון */}
                     {item.image && (
-                        <View className="mt-3 items-end items-center">
+                        <View className="mt-3  items-center">
                             <Image
                                 source={{ uri: item.image }}
                                 className="w-12 h-12 rounded-full "
@@ -109,6 +107,7 @@ export default function Services() {
                     )}
                 </View>
             </AnimatedCard>
+            </AnimatedScreen>
         );
     };
 
@@ -121,9 +120,10 @@ export default function Services() {
     }
 
     return (
+                <AnimatedScreen type="fade" duration={400}>
         <SafeAreaView className="flex-1 p-4 bg-white dark:bg-gray-900">
-            <Heading title={t("ourServices")} style={{ textAlign }} />
-            <NormalText className="mb-4" style={{ textAlign }}>{t("servicesDescription")}</NormalText>
+            <Heading title={t("ourServices")} style={{ textAlign: "center" }} />
+            <NormalText className="mb-4" style={{ textAlign: "center" }}>{t("servicesDescription")}</NormalText>
 
             <FlatList
                 data={services}
@@ -134,5 +134,6 @@ export default function Services() {
                 className="bg-primary-100 dark:bg-primary-900 rounded-lg"
             />
         </SafeAreaView>
+            </AnimatedScreen>
     );
 }

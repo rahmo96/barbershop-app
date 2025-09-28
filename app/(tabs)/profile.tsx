@@ -1,5 +1,5 @@
 // app/profile.tsx
-import React, { useEffect, ReactNode} from "react";
+import React, { useEffect} from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Redirect } from "expo-router";
@@ -14,6 +14,7 @@ import { ProfileItem } from "@/components/ProfileItem";
 import { Edit3, Calendar, LogOut } from "lucide-react-native";
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLocalization } from '@/context/LocalizationContext';
+import AnimatedScreen from "@/components/AnimatedScreen";
 
 export default function Profile() {
     const { current, loading, logout } = useUser();
@@ -28,7 +29,7 @@ export default function Profile() {
     useEffect(() => {
         opacity.value = withTiming(1, { duration: 800 });
         translateY.value = withTiming(0, { duration: 800 });
-    }, []);
+    }, [opacity, translateY]);
 
     // Animated styles
     const containerStyle = useAnimatedStyle(() => ({
@@ -51,7 +52,8 @@ export default function Profile() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-white dark:bg-black">
+        <AnimatedScreen type="fade" duration={400}>
+        <SafeAreaView className="flex-1 bg-primary-50 dark:bg-gray-900">
             <ScrollView>
                 <Animated.View
                     style={containerStyle}
@@ -75,7 +77,7 @@ export default function Profile() {
                         </Text>
                     </View>
 
-                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 mb-6">
+                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 mb-6 text-center justify-center items-center">
                         <Text className="text-lg font-bold mb-4 text-black dark:text-white">
                             {t("accountSettings")}
                         </Text>
@@ -113,28 +115,7 @@ export default function Profile() {
                 </Animated.View>
             </ScrollView>
         </SafeAreaView>
+            </AnimatedScreen>
     );
 }
 
-interface StaggeredItemProps {
-    children: ReactNode;
-    delay?: number;
-}
-
-// Add a StaggeredItem component for animations
-const StaggeredItem: React.FC<StaggeredItemProps> = ({ children }) => {
-    const opacity = useSharedValue(0);
-    const translateY = useSharedValue(20);
-
-    useEffect(() => {
-        opacity.value = withTiming(1, { duration: 500 });
-        translateY.value = withTiming(0, { duration: 500 });
-    }, []);
-
-    const style = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-        transform: [{ translateY: translateY.value }],
-    }));
-
-    return <Animated.View style={style}>{children}</Animated.View>;
-};

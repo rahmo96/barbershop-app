@@ -1,9 +1,9 @@
 import React from "react";
-import { View, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import { Tabs } from "expo-router";
 import TabIcon from "@/components/TabIcon";
 import { icons } from "@/constants/icons";
-import {UserProvider} from "@/context/UserContext";
+import { UserProvider } from "@/context/UserContext";
 
 export default function TabsLayout() {
     const colorScheme = useColorScheme();
@@ -11,7 +11,6 @@ export default function TabsLayout() {
 
     return (
         <UserProvider>
-        <View className= "flex-1 ">
             <Tabs
                 screenOptions={{
                     headerShown: false,
@@ -25,15 +24,13 @@ export default function TabsLayout() {
                         height: 65,
                         paddingBottom: 8,
                     },
-                    tabBarActiveTintColor: isDark? "#e8ebf1" : "#3b82f6", // Accent color
+                    tabBarActiveTintColor: isDark ? "#e8ebf1" : "#3b82f6",
                     tabBarInactiveTintColor: isDark ? "#94a3b8" : "#64748b",
                     tabBarLabelStyle: {
                         fontSize: 12,
                         fontWeight: "600",
-                        paddingTop: 3.5
+                        paddingTop: 3.5,
                     },
-                    sceneStyle: { backgroundColor: isDark ? "#0a101c" : "#ffffff" },
-
                 }}
             >
                 <Tabs.Screen
@@ -43,8 +40,6 @@ export default function TabsLayout() {
                         tabBarIcon: ({ focused }) => (
                             <TabIcon focused={focused} icon={icons.home} title="" />
                         ),
-
-
                     }}
                 />
                 <Tabs.Screen
@@ -54,9 +49,7 @@ export default function TabsLayout() {
                         tabBarIcon: ({ focused }) => (
                             <TabIcon focused={focused} icon={icons.beard} title="" />
                         ),
-
                     }}
-
                 />
                 <Tabs.Screen
                     name="services"
@@ -68,17 +61,15 @@ export default function TabsLayout() {
                     }}
                 />
                 <Tabs.Screen
-                    name = "bookings"
+                    name="bookings"
                     options={{
                         title: "My Bookings",
-                        tabBarIcon: ({focused}) => (
-                            <TabIcon focused={focused} icon={icons.calendar} title=""/>),
+                        tabBarIcon: ({ focused }) => (
+                            <TabIcon focused={focused} icon={icons.calendar} title="" />
+                        ),
                     }}
-
-                    />
+                />
             </Tabs>
-        </View>
         </UserProvider>
-
     );
 }

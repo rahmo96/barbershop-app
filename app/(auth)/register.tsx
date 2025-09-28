@@ -19,8 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalization } from '@/context/LocalizationContext';
 
 export default function RegisterScreen() {
-    const { t, locale } = useLocalization();
-    const textAlign = locale === 'he' ? 'right' : 'left';
+    const { t } = useLocalization();
     const keyboardVerticalOffset = Platform.select({ ios: 64, android: 0 });
     const router = useRouter();
 
@@ -89,7 +88,7 @@ export default function RegisterScreen() {
                                 autoCapitalize="words"
                                 onChangeText={setName}
                                 value={name}
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                                 returnKeyType="next"
                                 onSubmitEditing={() => emailRef.current?.focus()}
                             />
@@ -103,7 +102,7 @@ export default function RegisterScreen() {
                                 autoCapitalize="none"
                                 onChangeText={setEmail}
                                 value={email}
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                                 returnKeyType="next"
                                 onSubmitEditing={() => passwordRef.current?.focus()}
                             />
@@ -117,7 +116,7 @@ export default function RegisterScreen() {
                                 keyboardType="default"
                                 onChangeText={setPassword}
                                 value={password}
-                                style={{ textAlign }}
+                                style={{ textAlign: "center" }}
                                 returnKeyType="done"
                             />
 
