@@ -6,6 +6,7 @@ interface ThemedInputProps extends TextInputProps {
     error?: string;
 }
 
+// eslint-disable-next-line react/display-name
 const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
     ({ label, error, className = "", ...props }, ref) => {
         return (
