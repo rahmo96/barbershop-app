@@ -33,7 +33,7 @@ export default function HomeScreen() {
             withDelay(100, withTiming(1.1, { duration: 600 })),
             withTiming(1, { duration: 300 })
         );
-    }, []);
+    }, [logoScale, opacity, translateY]);
 
     // Animation styles
     const contentStyle = useAnimatedStyle(() => ({
