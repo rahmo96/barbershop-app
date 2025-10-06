@@ -1,9 +1,8 @@
 // app/(tabs)/appointments.tsx
 import React, { useMemo, useState, useEffect } from "react";
-import { View, Alert, ActivityIndicator, ScrollView } from "react-native";
+import { View, Alert, ActivityIndicator, ScrollView, useColorScheme } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from "react-native-calendars";
-import { useColorScheme } from "react-native";
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
 import Heading from "@/components/Heading";
 import RoundedButton from "@/components/RoundedButtons";
@@ -50,7 +49,7 @@ export default function Appointments() {
             }
         }
         loadSlots();
-    }, [selectedDate]);
+    }, [selectedDate, serviceId]);
 
     // Marked dates
     const markedDates = useMemo(

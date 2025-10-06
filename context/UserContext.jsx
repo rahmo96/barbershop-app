@@ -9,9 +9,7 @@ import {
 import { auth } from "@/utils/firebase";
 import { toast } from "@/lib/toast";
 import { createUser } from "@/services/users";
-import { doc, setDoc } from "firebase/firestore";
 import { updateUser } from "@/services/users";
-import {db} from "@/utils/firebase";
 
 
 const UserContext = createContext();

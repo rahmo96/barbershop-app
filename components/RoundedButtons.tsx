@@ -1,7 +1,6 @@
 import { Pressable } from "react-native";
 import {Href, useRouter} from "expo-router";
 import NormalText from "@/components/NormalText";
-import clsx from "clsx";
 
 const RoundedButton = ({
                            text,

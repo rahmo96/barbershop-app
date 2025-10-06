@@ -25,7 +25,7 @@ const LoadingScreen = ({ message = "Loading..." }: LoadingScreenProps) => {
                 }),
             ])
         ).start();
-    }, []);
+    }, [pulseAnim]);
 
     return (
         <SafeAreaView className="flex-1 items-center justify-center bg-primary-light dark:bg-primary-dark">
