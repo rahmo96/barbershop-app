@@ -1,4 +1,3 @@
-// components/LoadingScreen.tsx
 import React, { useRef, useEffect } from "react";
 import {  ActivityIndicator, Animated } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';

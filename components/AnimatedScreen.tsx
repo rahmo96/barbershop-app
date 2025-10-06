@@ -1,4 +1,3 @@
-// components/AnimatedScreen.tsx
 import React, { useEffect } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import Animated, {

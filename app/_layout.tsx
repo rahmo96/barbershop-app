@@ -1,4 +1,3 @@
-// app/_layout.tsx
 import { Stack } from "expo-router";
 import { View, useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";

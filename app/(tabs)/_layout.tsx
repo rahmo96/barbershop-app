@@ -15,6 +15,7 @@ export default function TabsLayout() {
                     options={{
                         title: "Home",
                         tabBarLabel: "Home",
+                        tabBarIcon: require("@/assets/icons/home.png"),
                     }}
                 />
                 <Tabs.Screen
@@ -22,6 +23,7 @@ export default function TabsLayout() {
                     options={{
                         title: "Profile",
                         tabBarLabel: "Profile",
+                        tabBarIcon: require("@/assets/icons/beard.png"),
                     }}
                 />
                 <Tabs.Screen
@@ -29,6 +31,7 @@ export default function TabsLayout() {
                     options={{
                         title: "Services",
                         tabBarLabel: "Services",
+                        tabBarIcon: require("@/assets/icons/sccissors.png"),
                     }}
                 />
                 <Tabs.Screen
@@ -36,6 +39,7 @@ export default function TabsLayout() {
                     options={{
                         title: "Bookings",
                         tabBarLabel: "Bookings",
+                        tabBarIcon: require("@/assets/icons/calendar.png"),
                     }}
                 />
             </Tabs>

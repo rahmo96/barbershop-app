@@ -1,4 +1,3 @@
-// context/LocalizationContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nManager } from "react-native";
@@ -99,6 +98,13 @@ const translations = {
         updateError: "An error occurred while updating your appointment",
         date: "Date",
         time: "Time",
+        appointmentSuccessTitle: "Appointment Confirmed",
+        appointmentSuccessMessage: "Your appointment has been successfully booked! Thank you for choosing us.",
+        ok: "OK",
+        errorTitle: "Error",
+        appointmentErrorMessage: "An error occurred while creating the appointment. Please try again later.",
+
+
 
         // --- Marketing / Landing Page ---
         professionalBarberServices: "Professional Barber Services",
@@ -195,6 +201,12 @@ const translations = {
         approving: "מאשר...",
         date: "תאריך",
         time: "שעה",
+        appointmentSuccessTitle: "הזמנה התקבלה",
+        appointmentSuccessMessage: "התור נקבע בהצלחה! תודה שבחרת בנו.",
+        ok: "אישור",
+        errorTitle: "שגיאה",
+        appointmentErrorMessage: "אירעה שגיאה בעת יצירת התור. אנא נסה שוב מאוחר יותר.",
+
 
         // Services
         Hair_Dye: "צביעת שיער",
@@ -262,7 +274,6 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
     // Handle RTL layout changes when locale changes
     useEffect(() => {
         if (!isLoading) {
-            // Set RTL for Hebrew
             const shouldBeRTL = locale === "he";
 
             if (I18nManager.isRTL !== shouldBeRTL) {

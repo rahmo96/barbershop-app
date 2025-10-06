@@ -1,4 +1,3 @@
-// components/TabsPill.tsx
 import React from "react";
 import {ViewStyle, StyleProp, useColorScheme, Text} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";

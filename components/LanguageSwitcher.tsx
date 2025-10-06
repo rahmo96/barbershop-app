@@ -1,4 +1,3 @@
-// components/LanguageSwitcher.tsx
 import React from "react";
 import { View, Pressable, Text } from "react-native";
 import { useLocalization } from "@/context/LocalizationContext";

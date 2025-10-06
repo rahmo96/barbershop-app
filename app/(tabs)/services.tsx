@@ -1,4 +1,3 @@
-// app/(tabs)/services.tsx
 import React, { useState, useEffect } from "react";
 import { View, FlatList, ActivityIndicator, Image, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -59,7 +58,7 @@ export default function Services() {
             router.push("/login");
         } else {
             router.push({
-                pathname: "/service-details",
+                pathname: "/services/service-details",
                 params: { id: item.id }
             });
         }
@@ -78,10 +77,8 @@ export default function Services() {
                 onPress={() => handlePress(item)}
             >
                 <View className="p-4">
-                    {/* שם השירות */}
                     <Heading title={t(item.name)} center={true} />
 
-                    {/* תיאור השירות */}
                     <NormalText
                         className="text-sm mt-1 text-center"
 
@@ -89,14 +86,12 @@ export default function Services() {
                         {t(item.description)}
                     </NormalText>
 
-                    {/* מחיר מתחת לשם השירות */}
                     <Text
                         className="text-lg font-extrabold text-green-600 dark:text-green-400 mt-2 text-center"
                     >
                         ₪{startingPrice}
                     </Text>
 
-                    {/* תמונה בצד ימין/שמאל לפי כיוון */}
                     {item.image && (
                         <View className="mt-3  items-center">
                             <Image

@@ -1,4 +1,3 @@
-// app/edit-profile.tsx
 import React, { useState } from "react";
 import {
     View,

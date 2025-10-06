@@ -1,4 +1,3 @@
-// scripts/seedServices.mjs
 
 import {
     collection,

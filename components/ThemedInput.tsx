@@ -1,4 +1,3 @@
-// components/ThemedInput.tsx
 import React, { forwardRef } from "react";
 import { TextInput, View, Text, TextInputProps } from "react-native";
 

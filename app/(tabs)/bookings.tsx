@@ -1,4 +1,3 @@
-// app/(tabs)/bookings.tsx
 import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, ActivityIndicator, Pressable } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';

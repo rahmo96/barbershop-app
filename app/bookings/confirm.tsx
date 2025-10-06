@@ -1,4 +1,3 @@
-// app/confirm.tsx
 import React, { useState } from "react";
 import { View, Text, Alert, ActivityIndicator, ScrollView, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +8,7 @@ import Heading from "@/components/Heading";
 import RoundedButton from "@/components/RoundedButtons";
 import { createAppointment } from "@/services/appointments";
 import { updateSlotAvailability } from "@/services/timeSlots";
+
 
 export default function Confirm() {
     const { t } = useLocalization();
@@ -53,12 +53,19 @@ export default function Confirm() {
             // Update slot availability
             await updateSlotAvailability(date, time, false);
 
-            Alert.alert("הזמנה התקבלה", "התור נקבע בהצלחה! תודה שבחרת בנו.", [
-                { text: "אישור", onPress: () => router.replace("/(tabs)/profile") },
-            ]);
+            Alert.alert(
+                t("appointmentSuccessTitle"),
+                t("appointmentSuccessMessage"),
+                [
+                    { text: t("ok"), onPress: () => router.replace("/(tabs)/profile") },
+                ]
+            );
         } catch (error) {
             console.error("Error creating appointment:", error);
-            Alert.alert("שגיאה", "אירעה שגיאה בעת יצירת התור. אנא נסה שוב מאוחר יותר.");
+            Alert.alert(
+                t("errorTitle"),
+                t("appointmentErrorMessage")
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -70,47 +77,45 @@ export default function Confirm() {
                 <View className="px-4 py-6">
                     <Heading title={t("confirmationDetails")} />
 
-                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-5 mt-6">
+                    <View className="bg-gray-100 dark:bg-gray-800 rounded-xl p-5 mt-6 justify-center items-center">
                         <Text className="text-lg font-bold mb-3 text-black dark:text-white">
                             {t(title)}
                         </Text>
 
                         <View className="space-y-4">
-                            <View>
-                            </View>
 
-                            <View>
-                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            <View className="items-center">
+                                <Text className="text-xl text-gray-500 dark:text-gray-400">
                                     {t("date")}
                                 </Text>
-                                <Text className="text-md font-medium text-black dark:text-white">
+                                <Text className="text-lg font-medium text-black dark:text-white">
                                     {date}
                                 </Text>
                             </View>
 
-                            <View>
-                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            <View className="items-center">
+                                <Text className="text-xl text-gray-500 dark:text-gray-400">
                                     {t("time")}
                                 </Text>
-                                <Text className="text-md font-medium text-black dark:text-white">
+                                <Text className="text-lg font-medium text-black dark:text-white">
                                     {time}
                                 </Text>
                             </View>
 
-                            <View>
-                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            <View className="items-center">
+                                <Text className="text-xl text-gray-500 dark:text-gray-400">
                                     {t("duration")}
                                 </Text>
-                                <Text className="text-md font-medium text-black dark:text-white">
+                                <Text className="text-lg font-medium text-black dark:text-white">
                                     {duration} {t("minutes")}
                                 </Text>
                             </View>
 
-                            <View>
-                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            <View className="items-center">
+                                <Text className="text-xl text-gray-500 dark:text-gray-400">
                                     {t("price")}
                                 </Text>
-                                <Text className="text-md font-medium text-black dark:text-white">
+                                <Text className="text-lg font-medium text-black dark:text-white">
                                     ₪{totalPrice}
                                 </Text>
                             </View>

@@ -1,4 +1,3 @@
-// components/TabIcon.tsx
 import React from "react";
 import { Image, Text, View, StyleSheet, ImageSourcePropType } from "react-native";
 import TabsPill from "@/components/TabsPill";

@@ -1,4 +1,3 @@
-// hooks/useFormValidation.ts
 import { useState } from 'react';
 
 type ValidationRules = {

@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, Dimensions, View } from "react-native";
+import { TouchableOpacity, Text, Dimensions, View, Image } from "react-native";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -23,10 +23,10 @@ export default function CustomTabBar({ state, descriptors, navigation }: any) {
     }));
 
     return (
-        <View className="flex-row h-[65px] bg-white dark:bg-black border-t direction-ltr">
+        <View className="flex-row h-[70px] bg-white dark:bg-black border-t direction-ltr">
             <Animated.View
                 style={[{ width: tabWidth * 0.9 }, pillStyle]}
-                className="absolute bottom-2 left-0 h-[50px] mx-2 rounded-full overflow-hidden"
+                className="absolute bottom-2 left-0 h-[50px] mx-2 rounded-full overflow-hidden z-0 direction-ltr"
             >
                 <LinearGradient
                     colors={["#3b82f6", "#2563eb"]}
@@ -36,35 +36,28 @@ export default function CustomTabBar({ state, descriptors, navigation }: any) {
                 />
             </Animated.View>
 
-            {/* טאבים */}
             {state.routes.map((route: any, index: number) => {
                 const { options } = descriptors[route.key];
                 const label = options.tabBarLabel ?? options.title ?? route.name;
+                const icon = options.tabBarIcon;
                 const isFocused = state.index === index;
-
-                const onPress = () => {
-                    const event = navigation.emit({
-                        type: "tabPress",
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
-
-                    if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate(route.name);
-                    }
-                };
 
                 return (
                     <TouchableOpacity
                         key={route.key}
-                        onPress={onPress}
-                        className="flex-1 items-center justify-center"
+                        onPress={() => navigation.navigate(route.name)}
+                        className="flex-1 items-center justify-center z-10"
                     >
+                        {icon && (
+                            <Image
+                                source={icon}
+                                className="w-5 h-5 mb-1"
+                                style={{ tintColor: isFocused ? "#fff" : "#64748b" }}
+                            />
+                        )}
                         <Text
                             className={
-                                isFocused
-                                    ? "text-white font-bold"
-                                    : "text-gray-500 font-medium"
+                                isFocused ? "text-white font-bold" : "text-gray-500 font-medium"
                             }
                         >
                             {label}
@@ -72,6 +65,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: any) {
                     </TouchableOpacity>
                 );
             })}
+
         </View>
     );
 }

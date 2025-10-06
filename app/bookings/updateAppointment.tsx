@@ -1,4 +1,3 @@
-// app/updateAppointment.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import { View, Alert, useColorScheme, ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';

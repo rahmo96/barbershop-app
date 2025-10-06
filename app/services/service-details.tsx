@@ -1,4 +1,3 @@
-// app/service-details.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import { View, ScrollView, Image, TouchableOpacity, ImageSourcePropType } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";

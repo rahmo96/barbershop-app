@@ -1,4 +1,3 @@
-// components/RoundedButtons.tsx
 import { Pressable } from "react-native";
 import {Href, useRouter} from "expo-router";
 import NormalText from "@/components/NormalText";
@@ -28,7 +27,6 @@ const RoundedButton = ({
     };
 
     return (
-// components/RoundedButtons.tsx
         <Pressable
             className={`rounded-full py-3 px-6 items-center justify-center my-2 
                 ${disabled ? 'bg-gray-400 dark:bg-gray-600' : 'bg-primary-500 dark:bg-primary-700'} 

@@ -21,26 +21,26 @@ export default function UserHeader() {
     }
 
     return (
-        <View className="w-full flex-row-reverse items-center justify-between p-4 bg-primary-500 dark:bg-primary-900 rounded-full"
-              style={{
-                  shadowColor: "#000000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-
-                  // Android
-                  elevation: 5,
-              }}>
+        <View
+            className="w-full flex-row-reverse items-center justify-center p-4 bg-primary-500 dark:bg-primary-900 rounded-full"
+            style={{
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
+            }}
+        >
             {current ? (
                 <View className="flex-row-reverse items-center space-x-reverse space-x-3">
                     <Image
                         source={{ uri: current.photoURL ?? "https://via.placeholder.com/40" }}
                         className="w-10 h-10 rounded-full"
                     />
-                    <NormalText className="text-lg text-gray-900 dark:text-white">
+                    <NormalText className="text-lg text-gray-900 dark:text-white text-center">
                         {t("welcomeUser")} {current.displayName}
                     </NormalText>
-                    <Pressable onPress={logout} className="mr-5 px-4 py-2 rounded-xl bg-blue-500">
+                    <Pressable onPress={logout} className="mr-3 px-4 py-2 rounded-xl bg-blue-500">
                         <NormalText className="text-sm text-white font-semibold">{t("logout")}</NormalText>
                     </Pressable>
                 </View>
@@ -48,18 +48,19 @@ export default function UserHeader() {
                 <View className="flex-row space-x-reverse space-x-3">
                     <Pressable
                         onPress={() => router.push("/login")}
-                        className="px-2 py-2 rounded-full bg-secondary-700"
+                        className="px-4 py-2 rounded-full bg-secondary-700 mr-3"
                     >
-                        <NormalText className="text-white text-lg">{t("login")}</NormalText>
+                        <NormalText className="text-white text-md">{t("login")}</NormalText>
                     </Pressable>
                     <Pressable
                         onPress={() => router.push("/register")}
-                        className="px-2 py-2 rounded-full bg-secondary-700"
+                        className="px-4 py-2 rounded-full bg-secondary-700 ml-3"
                     >
-                        <NormalText className="text-white text-lg">{t("register")}</NormalText>
+                        <NormalText className="text-white text-md">{t("register")}</NormalText>
                     </Pressable>
                 </View>
             )}
         </View>
+
     );
 }

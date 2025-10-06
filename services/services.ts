@@ -1,4 +1,3 @@
-// services/services.ts
 import { db } from "@/utils/firebase";
 import { collection, getDocs, query, orderBy, doc, getDoc } from "firebase/firestore";
 

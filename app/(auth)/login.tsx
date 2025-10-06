@@ -1,4 +1,3 @@
-// app/(auth)/login.tsx
 import React, { useState } from "react";
 import {
     View,
@@ -110,7 +109,7 @@ export default function LoginScreen() {
                     <SafeAreaView className="absolute bottom-0 left-0 right-0 items-center pb-4">
                         <Pressable
                             className="rounded-full py-3 px-6 items-center justify-center bg-primary-400 dark:bg-primary-600 w-60"
-                            onPress={() => router.push("/")}
+                            onPress={() => router.replace("/(tabs)")}
                         >
                             <Text className="text-white font-bold">
                                 {t("home")}

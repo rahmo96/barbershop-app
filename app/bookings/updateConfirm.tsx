@@ -1,4 +1,3 @@
-// app/updateConfirm.tsx
 import React, { useState } from "react";
 import { View, Text, Alert, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams, Redirect } from "expo-router";
@@ -8,7 +7,7 @@ import { updateAppointment } from "@/services/appointments";
 import RoundedButton from "@/components/RoundedButtons";
 import Heading from "@/components/Heading";
 import { useLocalization } from "@/context/LocalizationContext";
-import { format, parseISO } from "date-fns"; // Add parseISO
+import { format, parseISO } from "date-fns";
 import { he } from "date-fns/locale";
 import LoadingScreen from "@/components/LoadingScreen";
 

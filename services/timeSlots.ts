@@ -1,4 +1,3 @@
-// services/timeSlots.ts
 import { db } from "@/utils/firebase";
 import { doc, getDoc, setDoc} from "firebase/firestore";
 

@@ -78,7 +78,7 @@ export default function Appointments() {
         }
 
         router.push({
-            pathname: "/confirm",
+            pathname: "/bookings/confirm",
             params: {
                 id: serviceId,
                 serviceId: serviceId,

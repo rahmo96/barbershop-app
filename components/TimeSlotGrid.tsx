@@ -1,4 +1,3 @@
-// components/TimeSlotGrid.tsx
 import React, { useMemo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useLocalization } from '@/context/LocalizationContext';

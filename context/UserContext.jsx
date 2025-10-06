@@ -1,4 +1,3 @@
-// context/UserContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import {
     createUserWithEmailAndPassword,
