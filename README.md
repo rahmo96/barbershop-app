@@ -1,4 +1,3 @@
-Based on the code and project structure, I've created a comprehensive README.md for your barbershop app:
 
 ```markdown
 # Elegant Cuts - Barbershop App
@@ -113,9 +112,6 @@ Full authentication flow with registration, login, and profile management using 
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
 
