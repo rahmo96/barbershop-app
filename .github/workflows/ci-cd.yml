@@ -1,70 +1,90 @@
-name: Expo EAS CI/CD
+name: Barbershop App CI/CD
 
 on:
   push:
-    branches:
-      - master
-      - main
+    branches: [ main, develop, master ]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [ main, develop, master ]
 
 jobs:
-  build:
+  lint-and-test:
+    name: Lint and Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /home/runner/work/barbershop-app/
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '20.19.4'
+          cache: 'npm'
 
-      # Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
+      - name: Lint code
+        run: npm run lint
 
+      - name: Type check
+        run: npm run tsc
 
       - name: Run tests
-        run: npm test || echo "No tests found"
+        run: npm test
 
-      # Install EAS CLI
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
-
-      # Build for Android & iOS
-      - name: Build with EAS
-        run: eas build --platform all --non-interactive --profile production
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-  submit:
-    needs: build
+  build-android:
+    name: Build Android App
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Install EAS CLI
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-      # Submit to App Store & Google Play
-      - name: Submit builds
-        run: eas submit --platform all --non-interactive --latest
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
-          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo and EAS
+        run: npm install -g expo-cli eas-cli
+
+      - name: Authenticate with Expo
+        run: echo "${{ secrets.EXPO_TOKEN }}" | expo login
+
+      - name: Build Android preview
+        run: eas build --platform android --profile preview --non-interactive
+
+  build-ios:
+    name: Build iOS App
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo and EAS
+        run: npm install -g expo-cli eas-cli
+
+      - name: Authenticate with Expo
+        run: echo "${{ secrets.EXPO_TOKEN }}" | expo login
+
+      - name: Build iOS preview
+        run: eas build --platform ios --profile preview --non-interactive
