@@ -11,6 +11,7 @@
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "tsc": "tsc --noEmit",
+    "test": "no tests yet",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
